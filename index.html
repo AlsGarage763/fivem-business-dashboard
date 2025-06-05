@@ -1,315 +1,484 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FiveM Business Dashboard with Login & CSV Export</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      background: linear-gradient(to right, #1f2937, #111827);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    .glass {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
-    }
-    .fade-in {
-      animation: fadeIn 0.7s ease-out forwards;
-    }
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(10px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FiveM Business Dashboard</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    margin: 0;
+    padding: 0;
+  }
+  nav {
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    flex-wrap: wrap;
+  }
+  nav button {
+    background: transparent;
+    border: 2px solid #fff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+    white-space: nowrap;
+  }
+  nav button:hover, nav button.active {
+    background: #fff;
+    color: #764ba2;
+  }
+  section {
+    max-width: 600px;
+    margin: 40px auto;
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 25px 30px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  }
+  h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  input, select, button {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+  button {
+    background: #764ba2;
+    color: white;
+    font-weight: 700;
+    border: none;
+  }
+  button:hover {
+    background: #667eea;
+  }
+  .result {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 10px;
+  }
+  .log-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 15px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    color: #eee;
+  }
+  .log-list p {
+    font-size: 14px;
+    margin: 4px 0;
+  }
+  .reset-btn {
+    background: #ff4d4d;
+    margin-top: 10px;
+  }
+</style>
 </head>
-<body class="text-white min-h-screen flex flex-col items-center justify-center p-6">
+<body>
 
-  <!-- LOGIN SCREEN -->
-  <div id="login-screen" class="min-h-screen flex flex-col items-center justify-center space-y-6 w-full max-w-md">
-    <h2 class="text-3xl font-bold text-white">Login to FiveM Dashboard</h2>
-    <form id="login-form" class="flex flex-col gap-4 bg-gray-800 p-6 rounded-xl shadow-lg w-full">
-      <input id="username" placeholder="Username" required class="p-3 rounded bg-gray-700 text-white" autocomplete="username" />
-      <input id="password" type="password" placeholder="Password" required class="p-3 rounded bg-gray-700 text-white" autocomplete="current-password" />
-      <button type="submit" class="bg-blue-600 hover:bg-blue-700 transition rounded px-4 py-2 font-semibold text-white">Log In</button>
-    </form>
-    <p id="login-error" class="text-red-500 hidden">Invalid username or password.</p>
+<nav>
+  <button id="nav-sales" class="active">Sales Log</button>
+  <button id="nav-payroll">Employee Payroll</button>
+  <button id="nav-profit">Business Profit</button>
+  <button id="nav-expenses">Expenses</button>
+</nav>
+
+<!-- SALES LOG SECTION -->
+<section id="sales-section">
+  <h2>Sales Log</h2>
+  <label for="sales-date">Date</label>
+  <input type="date" id="sales-date" />
+  <label for="sales-gross">Gross Sales ($)</label>
+  <input type="number" id="sales-gross" min="0" step="0.01" placeholder="Enter gross sales" />
+  <label for="sales-tax">Tax Rate (%)</label>
+  <input type="number" id="sales-tax" min="0" max="100" step="0.01" placeholder="Enter tax rate %" />
+  <button id="add-sale-btn">Add Sales Record</button>
+
+  <div class="log-list" id="sales-log-list">
+    <h4>Sales Records</h4>
+  </div>
+  <button id="reset-sales" class="reset-btn">Reset Sales Records</button>
+</section>
+
+<!-- EMPLOYEE PAYROLL SECTION -->
+<section id="payroll-section" style="display:none;">
+  <h2>Employee Payroll</h2>
+  <label for="payroll-date">Date</label>
+  <input type="date" id="payroll-date" />
+  
+  <label for="employee-select">Employee</label>
+  <select id="employee-select">
+    <option value="cuddy">Cuddy</option>
+    <option value="haze">Haze</option>
+    <option value="dante">Dante Vincenzo</option>
+  </select>
+
+  <label for="logs-worked">Number of Logs Worked</label>
+  <input type="number" id="logs-worked" min="0" placeholder="Enter logs worked" />
+  
+  <button id="add-payroll-btn">Add Payroll Record</button>
+
+  <div class="log-list" id="payroll-log-list">
+    <h4>Payroll Records</h4>
+  </div>
+  <button id="reset-payroll" class="reset-btn">Reset Payroll Records</button>
+</section>
+
+<!-- BUSINESS PROFIT SECTION -->
+<section id="profit-section" style="display:none;">
+  <h2>Business Profit</h2>
+  <button id="calculate-profit-btn">Calculate Profit</button>
+  <div class="result" id="profit-result"></div>
+
+  <h4>Profit History</h4>
+  <div class="log-list" id="profit-log-list"></div>
+  <button id="reset-profit" class="reset-btn">Reset Profit History</button>
+</section>
+
+<!-- EXPENSES SECTION -->
+<section id="expenses-section" style="display:none;">
+  <h2>Expenses</h2>
+  <label for="expense-date">Date</label>
+  <input type="date" id="expense-date" />
+  <label for="expense-category">Category</label>
+  <input type="text" id="expense-category" placeholder="e.g. Materials, Rent" />
+  <label for="expense-amount">Amount ($)</label>
+  <input type="number" id="expense-amount" min="0" step="0.01" placeholder="Enter amount spent" />
+  <button id="add-expense-btn">Add Expense</button>
+
+  <div class="log-list" id="expense-log-list">
+    <h4>Expense Records</h4>
   </div>
 
-  <!-- DASHBOARD -->
-  <div id="dashboard" class="hidden w-full max-w-4xl space-y-10">
+  <div class="result" id="monthly-expense-total"></div>
+  <button id="reset-expenses" class="reset-btn">Reset Expense Records</button>
+</section>
 
-    <!-- NAVIGATION -->
-    <div class="text-center mb-8 space-x-4">
-      <button onclick="showSection('sales')" class="text-white hover:underline">📊 Sales Report</button>
-      <button onclick="showSection('payroll')" class="text-white hover:underline">👷 Employee Payroll</button>
-      <button onclick="logout()" class="text-red-400 hover:underline ml-8 font-semibold">🚪 Logout</button>
-    </div>
+<script>
+// Constants
+const PAY_PER_LOG = 500;
 
-    <!-- SALES SECTION -->
-    <section id="sales" class="fade-in">
-      <div class="text-center">
-        <h1 class="text-4xl font-bold mb-1">💼 FiveM Business Dashboard</h1>
-        <p class="text-gray-300">Track your RP business like a pro</p>
-      </div>
+// Utility functions for localStorage
+function getLocalData(key) {
+  return JSON.parse(localStorage.getItem(key)) || [];
+}
 
-      <div class="glass p-6 rounded-2xl shadow-xl mb-6">
-        <form id="sale-form" class="flex gap-4">
-          <input id="sale-amount" type="number" placeholder="Enter sale amount"
-            class="w-full p-3 rounded-xl bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" min="0" step="0.01" />
-          <button type="submit"
-            class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-5 py-3 rounded-xl font-semibold shadow transition-all">
-            ➕ Add
-          </button>
-        </form>
-      </div>
+function setLocalData(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
+}
 
-      <div class="glass p-6 rounded-2xl shadow-xl">
-        <h2 class="text-2xl font-semibold mb-4">📊 Sales Report</h2>
-        <p>Total Sales: <span id="total-sales" class="font-bold text-green-400">$0.00</span></p>
-        <p>Sales Tax (10%): <span id="sales-tax" class="text-yellow-400">$0.00</span></p>
-        <p>Income Tax (15%): <span id="income-tax" class="text-yellow-300">$0.00</span></p>
-        <p class="pt-2 text-xl font-bold">Net Profit: <span id="net-profit" class="text-green-500">$0.00</span></p>
-      </div>
+// NAVIGATION
+const navSales = document.getElementById('nav-sales');
+const navPayroll = document.getElementById('nav-payroll');
+const navProfit = document.getElementById('nav-profit');
+const navExpenses = document.getElementById('nav-expenses');
 
-      <div class="text-center">
-        <button onclick="resetSales()"
-          class="mt-4 px-6 py-2 text-sm font-semibold text-red-400 hover:text-red-500 transition hover:underline">
-          🔁 Reset Sales Data
-        </button>
-      </div>
-    </section>
+const salesSection = document.getElementById('sales-section');
+const payrollSection = document.getElementById('payroll-section');
+const profitSection = document.getElementById('profit-section');
+const expensesSection = document.getElementById('expenses-section');
 
-    <!-- PAYROLL SECTION -->
-    <section id="payroll" class="hidden fade-in">
-      <div class="text-center">
-        <h1 class="text-3xl font-bold">👷 Employee Payroll</h1>
-        <p class="text-gray-400">Calculate and save monthly paychecks</p>
-      </div>
+function setActiveNav(button) {
+  [navSales, navPayroll, navProfit, navExpenses].forEach(btn => btn.classList.remove('active'));
+  button.classList.add('active');
+}
 
-      <div class="glass p-6 rounded-2xl shadow-xl mb-6">
-        <form id="payroll-form" class="space-y-4">
-          <div class="flex justify-between items-center">
-            <label for="cuddy-logs" class="text-lg font-medium">Cuddy Haze Logs:</label>
-            <input id="cuddy-logs" type="number" value="0" class="w-24 p-2 bg-gray-700 rounded text-white text-right" min="0" />
-          </div>
-          <div class="flex justify-between items-center">
-            <label for="dante-logs" class="text-lg font-medium">Dante Vincenzo Logs:</label>
-            <input id="dante-logs" type="number" value="0" class="w-24 p-2 bg-gray-700 rounded text-white text-right" min="0" />
-          </div>
-          <button type="submit"
-            class="mt-4 bg-gradient-to-r from-green-600 to-teal-600 px-4 py-2 rounded-xl hover:from-green-700 hover:to-teal-700 transition-all font-semibold">
-            💸 Calculate & Save Payroll
-          </button>
-        </form>
+navSales.onclick = () => {
+  setActiveNav(navSales);
+  salesSection.style.display = 'block';
+  payrollSection.style.display = 'none';
+  profitSection.style.display = 'none';
+  expensesSection.style.display = 'none';
+  renderSalesLogs();
+};
 
-        <div class="text-center mt-4">
-          <button onclick="resetPayrollForm()"
-            class="px-6 py-2 text-sm font-semibold text-red-400 hover:text-red-500 transition hover:underline">
-            🔁 Reset Payroll Form
-          </button>
-        </div>
+navPayroll.onclick = () => {
+  setActiveNav(navPayroll);
+  salesSection.style.display = 'none';
+  payrollSection.style.display = 'block';
+  profitSection.style.display = 'none';
+  expensesSection.style.display = 'none';
+  renderPayrollLogs();
+};
 
-        <div class="text-center mt-2">
-          <button onclick="clearPayrollHistory()"
-            class="text-sm font-semibold text-yellow-400 hover:text-yellow-500 transition hover:underline">
-            🗑️ Clear Payroll History
-          </button>
-        </div>
+navProfit.onclick = () => {
+  setActiveNav(navProfit);
+  salesSection.style.display = 'none';
+  payrollSection.style.display = 'none';
+  profitSection.style.display = 'block';
+  expensesSection.style.display = 'none';
+  renderProfitLogs();
+};
 
-        <div id="payroll-result" class="mt-6 space-y-2 text-lg hidden">
-          <p>Cuddy Haze Pay: <span id="cuddy-pay" class="text-green-400">$0.00</span></p>
-          <p>Dante Vincenzo Pay: <span id="dante-pay" class="text-green-400">$0.00</span></p>
-          <p>Total Logs: <span id="total-logs" class="text-blue-400">0</span></p>
-          <p>Total Payroll: <span id="total-payroll" class="text-yellow-300 font-semibold">$0.00</span></p>
-        </div>
-      </div>
+navExpenses.onclick = () => {
+  setActiveNav(navExpenses);
+  salesSection.style.display = 'none';
+  payrollSection.style.display = 'none';
+  profitSection.style.display = 'none';
+  expensesSection.style.display = 'block';
+  renderExpenseLogs();
+};
 
-      <div class="glass p-6 rounded-2xl shadow-xl mb-4">
-        <h3 class="text-xl font-semibold mb-3">📅 Monthly Payroll History</h3>
-        <ul id="payroll-history" class="space-y-2 text-gray-300 text-sm max-h-48 overflow-y-auto"></ul>
+// SALES LOG FUNCTIONS
+const salesDateInput = document.getElementById('sales-date');
+const salesGrossInput = document.getElementById('sales-gross');
+const salesTaxInput = document.getElementById('sales-tax');
+const addSaleBtn = document.getElementById('add-sale-btn');
+const salesLogList = document.getElementById('sales-log-list');
+const resetSalesBtn = document.getElementById('reset-sales');
 
-        <div class="text-center mt-4">
-          <button onclick="exportPayrollCSV()" class="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-700 transition text-white font-semibold">
-            📁 Export Payroll CSV
-          </button>
-        </div>
-      </div>
-    </section>
-  </div>
+addSaleBtn.onclick = () => {
+  const date = salesDateInput.value;
+  const gross = parseFloat(salesGrossInput.value);
+  const taxRate = parseFloat(salesTaxInput.value);
+  if (!date || isNaN(gross) || isNaN(taxRate)) {
+    alert('Please enter valid date, gross sales, and tax rate.');
+    return;
+  }
+  const sales = getLocalData('salesLogs');
+  sales.push({ date, gross, taxRate });
+  setLocalData('salesLogs', sales);
+  salesDateInput.value = '';
+  salesGrossInput.value = '';
+  salesTaxInput.value = '';
+  renderSalesLogs();
+};
 
-  <!-- SCRIPT -->
-  <script>
-    // --- LOGIN SYSTEM ---
-    const users = {
-      "admin": "password123",
-      "employee1": "loginsafe"
-    };
+function renderSalesLogs() {
+  const sales = getLocalData('salesLogs');
+  salesLogList.innerHTML = '<h4>Sales Records</h4>';
+  if (sales.length === 0) {
+    salesLogList.innerHTML += '<p>No sales records yet.</p>';
+    return;
+  }
+  sales.forEach((sale, i) => {
+    salesLogList.innerHTML += `<p>${sale.date} - Gross: $${sale.gross.toFixed(2)}, Tax Rate: ${sale.taxRate}%</p>`;
+  });
+}
 
-    const loginScreen = document.getElementById("login-screen");
-    const dashboard = document.getElementById("dashboard");
-    const loginError = document.getElementById("login-error");
+resetSalesBtn.onclick = () => {
+  if (confirm('Are you sure you want to reset all sales records?')) {
+    localStorage.removeItem('salesLogs');
+    renderSalesLogs();
+  }
+};
 
-    document.getElementById("login-form").addEventListener("submit", e => {
-      e.preventDefault();
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value;
-      if (users[username] && users[username] === password) {
-        loginScreen.classList.add("hidden");
-        dashboard.classList.remove("hidden");
-        loginError.classList.add("hidden");
-      } else {
-        loginError.classList.remove("hidden");
-      }
-    });
+// PAYROLL FUNCTIONS
+const payrollDateInput = document.getElementById('payroll-date');
+const employeeSelect = document.getElementById('employee-select');
+const logsWorkedInput = document.getElementById('logs-worked');
+const addPayrollBtn = document.getElementById('add-payroll-btn');
+const payrollLogList = document.getElementById('payroll-log-list');
+const resetPayrollBtn = document.getElementById('reset-payroll');
 
-    function logout() {
-      dashboard.classList.add("hidden");
-      loginScreen.classList.remove("hidden");
-      document.getElementById("login-form").reset();
+addPayrollBtn.onclick = () => {
+  const date = payrollDateInput.value;
+  const employee = employeeSelect.options[employeeSelect.selectedIndex].text;
+  const logs = parseInt(logsWorkedInput.value, 10);
+  if (!date || !employee || isNaN(logs)) {
+    alert('Please enter valid date, select employee, and logs worked.');
+    return;
+  }
+  const payrolls = getLocalData('payrollLogs');
+  payrolls.push({ date, employee, logs });
+  setLocalData('payrollLogs', payrolls);
+  payrollDateInput.value = '';
+  logsWorkedInput.value = '';
+  renderPayrollLogs();
+};
+
+function renderPayrollLogs() {
+  const payrolls = getLocalData('payrollLogs');
+  payrollLogList.innerHTML = '<h4>Payroll Records</h4>';
+  if (payrolls.length === 0) {
+    payrollLogList.innerHTML += '<p>No payroll records yet.</p>';
+    return;
+  }
+  payrolls.forEach((p, i) => {
+    payrollLogList.innerHTML += `<p>${p.date} - ${p.employee} worked ${p.logs} logs ($${(p.logs * PAY_PER_LOG).toFixed(2)})</p>`;
+  });
+}
+
+resetPayrollBtn.onclick = () => {
+  if (confirm('Are you sure you want to reset all payroll records?')) {
+    localStorage.removeItem('payrollLogs');
+    renderPayrollLogs();
+  }
+};
+
+// EXPENSES FUNCTIONS
+const expenseDateInput = document.getElementById('expense-date');
+const expenseCategoryInput = document.getElementById('expense-category');
+const expenseAmountInput = document.getElementById('expense-amount');
+const addExpenseBtn = document.getElementById('add-expense-btn');
+const expenseLogList = document.getElementById('expense-log-list');
+const monthlyExpenseTotal = document.getElementById('monthly-expense-total');
+const resetExpensesBtn = document.getElementById('reset-expenses');
+
+addExpenseBtn.onclick = () => {
+  const date = expenseDateInput.value;
+  const category = expenseCategoryInput.value.trim();
+  const amount = parseFloat(expenseAmountInput.value);
+  if (!date || !category || isNaN(amount)) {
+    alert('Please enter valid date, category, and amount.');
+    return;
+  }
+  const expenses = getLocalData('expenseLogs');
+  expenses.push({ date, category, amount });
+  setLocalData('expenseLogs', expenses);
+  expenseDateInput.value = '';
+  expenseCategoryInput.value = '';
+  expenseAmountInput.value = '';
+  renderExpenseLogs();
+};
+
+function renderExpenseLogs() {
+  const expenses = getLocalData('expenseLogs');
+  expenseLogList.innerHTML = '<h4>Expense Records</h4>';
+  if (expenses.length === 0) {
+    expenseLogList.innerHTML += '<p>No expense records yet.</p>';
+    monthlyExpenseTotal.innerHTML = '';
+    return;
+  }
+  // Sort expenses by date descending
+  expenses.sort((a,b) => b.date.localeCompare(a.date));
+  expenses.forEach((e, i) => {
+    expenseLogList.innerHTML += `<p>${e.date} - ${e.category}: $${e.amount.toFixed(2)}</p>`;
+  });
+
+  // Calculate total expenses for current month
+  const today = new Date();
+  const currentMonth = today.toISOString().slice(0,7); // "YYYY-MM"
+  let monthTotal = 0;
+  expenses.forEach(e => {
+    if (e.date.startsWith(currentMonth)) {
+      monthTotal += e.amount;
     }
+  });
 
-    // --- NAVIGATION ---
-    function showSection(id) {
-      document.getElementById('sales').classList.add('hidden');
-      document.getElementById('payroll').classList.add('hidden');
-      document.getElementById(id).classList.remove('hidden');
-    }
+  monthlyExpenseTotal.innerHTML = `<p><strong>Total Expenses for ${currentMonth}:</strong> $${monthTotal.toFixed(2)}</p>`;
+}
 
-    // --- SALES LOGIC ---
-    const sales = [];
-    const SALES_TAX_RATE = 0.10;
-    const INCOME_TAX_RATE = 0.15;
+resetExpensesBtn.onclick = () => {
+  if (confirm('Are you sure you want to reset all expense records?')) {
+    localStorage.removeItem('expenseLogs');
+    renderExpenseLogs();
+  }
+};
 
-    document.getElementById("sale-form").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const amount = parseFloat(document.getElementById("sale-amount").value);
-      if (!isNaN(amount) && amount > 0) {
-        sales.push(amount);
-        updateReport();
-        document.getElementById("sale-amount").value = "";
-      }
-    });
+// BUSINESS PROFIT FUNCTIONS
+const calculateProfitBtn = document.getElementById('calculate-profit-btn');
+const profitResult = document.getElementById('profit-result');
+const profitLogList = document.getElementById('profit-log-list');
+const resetProfitBtn = document.getElementById('reset-profit');
 
-    function updateReport() {
-      const totalSales = sales.reduce((a, b) => a + b, 0);
-      const salesTax = totalSales * SALES_TAX_RATE;
-      const incomeTax = totalSales * INCOME_TAX_RATE;
-      const netProfit = totalSales - salesTax - incomeTax;
+function calculateBusinessProfit() {
+  const sales = getLocalData('salesLogs');
+  const payrolls = getLocalData('payrollLogs');
+  const expenses = getLocalData('expenseLogs');
 
-      document.getElementById("total-sales").innerText = `$${totalSales.toFixed(2)}`;
-      document.getElementById("sales-tax").innerText = `$${salesTax.toFixed(2)}`;
-      document.getElementById("income-tax").innerText = `$${incomeTax.toFixed(2)}`;
-      document.getElementById("net-profit").innerText = `$${netProfit.toFixed(2)}`;
-    }
+  if (sales.length === 0) {
+    alert('No sales records to calculate profit.');
+    return;
+  }
 
-    function resetSales() {
-      sales.length = 0;
-      updateReport();
-    }
+  // Sum net sales after taxes
+  let totalNetProfit = 0;
+  sales.forEach(sale => {
+    const net = sale.gross * (1 - sale.taxRate / 100);
+    totalNetProfit += net;
+  });
 
-    // --- PAYROLL LOGIC ---
-    const PAY_PER_LOG = 500;
+  // Sum total salary owed
+  let totalSalary = 0;
+  payrolls.forEach(payroll => {
+    totalSalary += payroll.logs * PAY_PER_LOG;
+  });
 
-    document.getElementById("payroll-form").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const cuddyLogs = parseInt(document.getElementById("cuddy-logs").value) || 0;
-      const danteLogs = parseInt(document.getElementById("dante-logs").value) || 0;
+  // Sum total expenses (all expenses)
+  let totalExpenses = 0;
+  expenses.forEach(exp => {
+    totalExpenses += exp.amount;
+  });
 
-      const cuddyPay = cuddyLogs * PAY_PER_LOG;
-      const dantePay = danteLogs * PAY_PER_LOG;
-      const totalLogs = cuddyLogs + danteLogs;
-      const totalPayroll = cuddyPay + dantePay;
+  // Calculate final business profit
+  const finalProfit = totalNetProfit - totalSalary - totalExpenses;
 
-      document.getElementById("cuddy-pay").innerText = `$${cuddyPay.toFixed(2)}`;
-      document.getElementById("dante-pay").innerText = `$${dantePay.toFixed(2)}`;
-      document.getElementById("total-logs").innerText = totalLogs;
-      document.getElementById("total-payroll").innerText = `$${totalPayroll.toFixed(2)}`;
+  // Save profit record with today's date
+  const today = new Date().toISOString().split('T')[0];
+  const profitHistory = getLocalData('profitHistory');
+  profitHistory.push({ date: today, netProfit: totalNetProfit, totalSalary, totalExpenses, finalProfit });
+  setLocalData('profitHistory', profitHistory);
 
-      document.getElementById("payroll-result").classList.remove("hidden");
+  // Display results
+  profitResult.innerHTML = `
+    <p>Total Net Profit (after taxes): <strong>$${totalNetProfit.toFixed(2)}</strong></p>
+    <p>Total Salary Owed: <strong>$${totalSalary.toFixed(2)}</strong></p>
+    <p>Total Expenses: <strong>$${totalExpenses.toFixed(2)}</strong></p>
+    <p><strong>Final Business Profit:</strong> $${finalProfit.toFixed(2)}</p>
+  `;
 
-      // Save payroll to localStorage by month-year key
-      const now = new Date();
-      const key = `payroll-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-      const record = {
-        date: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`,
-        cuddy: cuddyPay,
-        dante: dantePay,
-        total: totalPayroll
-      };
-      localStorage.setItem(key, JSON.stringify(record));
-      loadPayrollHistory();
-    });
+  renderProfitLogs();
+}
 
-    function resetPayrollForm() {
-      document.getElementById("cuddy-logs").value = 0;
-      document.getElementById("dante-logs").value = 0;
-      document.getElementById("payroll-result").classList.add("hidden");
-    }
+function renderProfitLogs() {
+  const profits = getLocalData('profitHistory');
+  profitLogList.innerHTML = '<h4>Profit History</h4>';
+  if (profits.length === 0) {
+    profitLogList.innerHTML += '<p>No profit records yet.</p>';
+    return;
+  }
+  profits.forEach(p => {
+    profitLogList.innerHTML += `<p><strong>${p.date}</strong> — Net Profit: $${p.netProfit.toFixed(2)}, Salary: $${p.totalSalary.toFixed(2)}, Expenses: $${p.totalExpenses.toFixed(2)}, Final Profit: $${p.finalProfit.toFixed(2)}</p>`;
+  });
+}
 
-    function loadPayrollHistory() {
-      const ul = document.getElementById("payroll-history");
-      ul.innerHTML = "";
-      const keys = Object.keys(localStorage).filter(k => k.startsWith("payroll-")).sort();
-      if (keys.length === 0) {
-        ul.innerHTML = "<li class='italic text-gray-500'>No payroll history saved.</li>";
-        return;
-      }
-      keys.forEach(key => {
-        const record = JSON.parse(localStorage.getItem(key));
-        const li = document.createElement("li");
-        li.className = "bg-gray-800 rounded p-2 flex justify-between";
-        li.innerHTML = `
-          <span>${record.date}</span>
-          <span>Cuddy: $${record.cuddy.toFixed(2)}</span>
-          <span>Dante: $${record.dante.toFixed(2)}</span>
-          <span class="font-semibold">Total: $${record.total.toFixed(2)}</span>
-        `;
-        ul.appendChild(li);
-      });
-    }
+calculateProfitBtn.onclick = calculateBusinessProfit;
 
-    function clearPayrollHistory() {
-      if (confirm("Are you sure you want to clear all payroll history?")) {
-        Object.keys(localStorage).forEach(key => {
-          if (key.startsWith("payroll-")) {
-            localStorage.removeItem(key);
-          }
-        });
-        loadPayrollHistory();
-        resetPayrollForm();
-      }
-    }
+resetProfitBtn.onclick = () => {
+  if (confirm('Are you sure you want to reset profit history?')) {
+    localStorage.removeItem('profitHistory');
+    profitResult.innerHTML = '';
+    renderProfitLogs();
+  }
+};
 
-    function exportPayrollCSV() {
-      const rows = [["Month", "Cuddy Pay", "Dante Pay", "Total Payroll"]];
-      Object.keys(localStorage).forEach(key => {
-        if (key.startsWith("payroll-")) {
-          const record = JSON.parse(localStorage.getItem(key));
-          rows.push([record.date, record.cuddy.toFixed(2), record.dante.toFixed(2), record.total.toFixed(2)]);
-        }
-      });
-      if (rows.length === 1) {
-        alert("No payroll data to export.");
-        return;
-      }
-      const csvContent = rows.map(r => r.join(",")).join("\n");
-      const blob = new Blob([csvContent], {type: 'text/csv'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `payroll_history_${new Date().toISOString().slice(0,10)}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
+// INITIAL RENDER CALLS
+renderSalesLogs();
+renderPayrollLogs();
+renderProfitLogs();
+renderExpenseLogs();
 
-    // Initialize with sales report update and payroll history loaded
-    updateReport();
-    loadPayrollHistory();
-  </script>
+</script>
+
 </body>
 </html>
+
+
+
 
 
 
