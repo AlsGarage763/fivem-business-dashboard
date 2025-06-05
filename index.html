@@ -259,33 +259,33 @@
   const addPayrollBtn = document.getElementById('addPayrollBtn');
   const payrollLogDiv = document.getElementById('payrollLog');
   const resetPayrollBtn = document.getElementById('resetPayrollBtn');
+  const payrollRate = 500; // $500 per log
 
   function loadPayroll() {
-    const payrolls = JSON.parse(localStorage.getItem('payrollLogs') || '[]');
+    const payroll = JSON.parse(localStorage.getItem('payrollLogs') || '[]');
     payrollLogDiv.innerHTML = '';
-    payrolls.forEach(pay => {
-      const d = new Date(pay.date);
-      payrollLogDiv.innerHTML += `<div>${d.toLocaleString()}: ${pay.employee} - ${pay.logs} logs - $${pay.amount.toFixed(2)}</div>`;
+    payroll.forEach(entry => {
+      const d = new Date(entry.date);
+      payrollLogDiv.innerHTML += `<div>${d.toLocaleString()}: ${entry.employee} - ${entry.logs} logs ($${(entry.logs * payrollRate).toFixed(2)})</div>`;
     });
   }
 
   addPayrollBtn.onclick = () => {
     const employee = employeeSelect.value;
     const logs = parseInt(logCountInput.value);
-    if (isNaN(logs) || logs < 0) {
+    if (isNaN(logs) || logs <= 0) {
       alert('Enter a valid number of logs');
       return;
     }
-    const amount = logs * 500;
-    const payrolls = JSON.parse(localStorage.getItem('payrollLogs') || '[]');
-    payrolls.push({ employee, logs, amount, date: new Date().toISOString() });
-    localStorage.setItem('payrollLogs', JSON.stringify(payrolls));
+    const payroll = JSON.parse(localStorage.getItem('payrollLogs') || '[]');
+    payroll.push({ employee, logs, date: new Date().toISOString() });
+    localStorage.setItem('payrollLogs', JSON.stringify(payroll));
     logCountInput.value = '';
     loadPayroll();
   };
 
   resetPayrollBtn.onclick = () => {
-    if (confirm('Reset all payroll data?')) {
+    if (confirm('Reset all payroll records?')) {
       localStorage.removeItem('payrollLogs');
       loadPayroll();
     }
@@ -301,9 +301,9 @@
   function loadExpenses() {
     const expenses = JSON.parse(localStorage.getItem('expenseLogs') || '[]');
     expenseLogDiv.innerHTML = '';
-    expenses.forEach(exp => {
-      const d = new Date(exp.date);
-      expenseLogDiv.innerHTML += `<div>${d.toLocaleString()}: ${exp.description} - $${exp.amount.toFixed(2)}</div>`;
+    expenses.forEach(entry => {
+      const d = new Date(entry.date);
+      expenseLogDiv.innerHTML += `<div>${d.toLocaleString()}: ${entry.desc} - $${entry.amount.toFixed(2)}</div>`;
     });
   }
 
@@ -319,7 +319,7 @@
       return;
     }
     const expenses = JSON.parse(localStorage.getItem('expenseLogs') || '[]');
-    expenses.push({ description: desc, amount, date: new Date().toISOString() });
+    expenses.push({ desc, amount, date: new Date().toISOString() });
     localStorage.setItem('expenseLogs', JSON.stringify(expenses));
     expenseDescInput.value = '';
     expenseAmountInput.value = '';
@@ -333,7 +333,7 @@
     }
   };
 
-  // PROFIT PAGE
+  // PROFIT
   const calculateProfitBtn = document.getElementById('calculateProfitBtn');
   const profitResultDiv = document.getElementById('profitResult');
   const profitLogDiv = document.getElementById('profitLog');
@@ -342,41 +342,40 @@
   function loadProfitLogs() {
     const profits = JSON.parse(localStorage.getItem('profitLogs') || '[]');
     profitLogDiv.innerHTML = '';
-    profits.forEach(p => {
-      const d = new Date(p.date);
-      profitLogDiv.innerHTML += `<div>${d.toLocaleString()}: Profit $${p.profit.toFixed(2)}</div>`;
+    profits.forEach(entry => {
+      const d = new Date(entry.date);
+      profitLogDiv.innerHTML += `<div>${d.toLocaleString()}: Profit $${entry.profit.toFixed(2)}</div>`;
     });
   }
 
   calculateProfitBtn.onclick = () => {
-    // Calculate profit = total sales - total payroll - total expenses
     const sales = JSON.parse(localStorage.getItem('salesLogs') || '[]');
-    const payrolls = JSON.parse(localStorage.getItem('payrollLogs') || '[]');
+    const payroll = JSON.parse(localStorage.getItem('payrollLogs') || '[]');
     const expenses = JSON.parse(localStorage.getItem('expenseLogs') || '[]');
 
-    const totalSales = sales.reduce((sum, s) => sum + s.amount, 0);
-    const totalPayroll = payrolls.reduce((sum, p) => sum + p.amount, 0);
-    const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+    const totalSales = sales.reduce((acc, s) => acc + s.amount, 0);
+    const totalPayroll = payroll.reduce((acc, p) => acc + (p.logs * payrollRate), 0);
+    const totalExpenses = expenses.reduce((acc, e) => acc + e.amount, 0);
 
     const profit = totalSales - totalPayroll - totalExpenses;
     profitResultDiv.textContent = `Total Profit: $${profit.toFixed(2)}`;
 
     // Save profit log
-    const profits = JSON.parse(localStorage.getItem('profitLogs') || '[]');
-    profits.push({ profit, date: new Date().toISOString() });
-    localStorage.setItem('profitLogs', JSON.stringify(profits));
+    const profitLogs = JSON.parse(localStorage.getItem('profitLogs') || '[]');
+    profitLogs.push({ profit, date: new Date().toISOString() });
+    localStorage.setItem('profitLogs', JSON.stringify(profitLogs));
     loadProfitLogs();
   };
 
   resetProfitBtn.onclick = () => {
-    if (confirm('Reset all profit logs?')) {
+    if (confirm('Reset profit logs?')) {
       localStorage.removeItem('profitLogs');
       profitResultDiv.textContent = '';
       loadProfitLogs();
     }
   };
 
-  // Load all logs (for when login successful)
+  // Load all logs on page load (after login)
   function loadAllLogs() {
     loadSales();
     loadPayroll();
@@ -384,20 +383,16 @@
     loadProfitLogs();
   }
 
-  // Clear all inputs on logout
+  // Clear login inputs when logging out
   function clearInputs() {
     document.getElementById('username').value = '';
     document.getElementById('password').value = '';
-    salesAmountInput.value = '';
-    logCountInput.value = '';
-    expenseDescInput.value = '';
-    expenseAmountInput.value = '';
-    profitResultDiv.textContent = '';
   }
 </script>
 
 </body>
 </html>
+
 
 
 
