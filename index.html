@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FiveM Business Dashboard with Login & CSV Export</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #1f2937, #111827);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+    }
+    .fade-in {
+      animation: fadeIn 0.7s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="text-white min-h-screen flex flex-col items-center justify-center p-6">
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="min-h-screen flex flex-col items-center justify-center space-y-6 w-full max-w-md">
+    <h2 class="text-3xl font-bold text-white">Login to FiveM Dashboard</h2>
+    <form id="login-form" class="flex flex-col gap-4 bg-gray-800 p-6 rounded-xl shadow-lg w-full">
+      <input id="username" placeholder="Username" required class="p-3 rounded bg-gray-700 text-white" autocomplete="username" />
+      <input id="password" type="password" placeholder="Password" required class="p-3 rounded bg-gray-700 text-white" autocomplete="current-password" />
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 transition rounded px-4 py-2 font-semibold text-white">Log In</button>
+    </form>
+    <p id="login-error" class="text-red-500 hidden">Invalid username or password.</p>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="hidden w-full max-w-4xl space-y-10">
+
+    <!-- NAVIGATION -->
+    <div class="text-center mb-8 space-x-4">
+      <button onclick="showSection('sales')" class="text-white hover:underline">📊 Sales Report</button>
+      <button onclick="showSection('payroll')" class="text-white hover:underline">👷 Employee Payroll</button>
+      <button onclick="logout()" class="text-red-400 hover:underline ml-8 font-semibold">🚪 Logout</button>
+    </div>
+
+    <!-- SALES SECTION -->
+    <section id="sales" class="fade-in">
+      <div class="text-center">
+        <h1 class="text-4xl font-bold mb-1">💼 FiveM Business Dashboard</h1>
+        <p class="text-gray-300">Track your RP business like a pro</p>
+      </div>
+
+      <div class="glass p-6 rounded-2xl shadow-xl mb-6">
+        <form id="sale-form" class="flex gap-4">
+          <input id="sale-amount" type="number" placeholder="Enter sale amount"
+            class="w-full p-3 rounded-xl bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" min="0" step="0.01" />
+          <button type="submit"
+            class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-5 py-3 rounded-xl font-semibold shadow transition-all">
+            ➕ Add
+          </button>
+        </form>
+      </div>
+
+      <div class="glass p-6 rounded-2xl shadow-xl">
+        <h2 class="text-2xl font-semibold mb-4">📊 Sales Report</h2>
+        <p>Total Sales: <span id="total-sales" class="font-bold text-green-400">$0.00</span></p>
+        <p>Sales Tax (10%): <span id="sales-tax" class="text-yellow-400">$0.00</span></p>
+        <p>Income Tax (15%): <span id="income-tax" class="text-yellow-300">$0.00</span></p>
+        <p class="pt-2 text-xl font-bold">Net Profit: <span id="net-profit" class="text-green-500">$0.00</span></p>
+      </div>
+
+      <div class="text-center">
+        <button onclick="resetSales()"
+          class="mt-4 px-6 py-2 text-sm font-semibold text-red-400 hover:text-red-500 transition hover:underline">
+          🔁 Reset Sales Data
+        </button>
+      </div>
+    </section>
+
+    <!-- PAYROLL SECTION -->
+    <section id="payroll" class="hidden fade-in">
+      <div class="text-center">
+        <h1 class="text-3xl font-bold">👷 Employee Payroll</h1>
+        <p class="text-gray-400">Calculate and save monthly paychecks</p>
+      </div>
+
+      <div class="glass p-6 rounded-2xl shadow-xl mb-6">
+        <form id="payroll-form" class="space-y-4">
+          <div class="flex justify-between items-center">
+            <label for="cuddy-logs" class="text-lg font-medium">Cuddy Haze Logs:</label>
+            <input id="cuddy-logs" type="number" value="0" class="w-24 p-2 bg-gray-700 rounded text-white text-right" min="0" />
+          </div>
+          <div class="flex justify-between items-center">
+            <label for="dante-logs" class="text-lg font-medium">Dante Vincenzo Logs:</label>
+            <input id="dante-logs" type="number" value="0" class="w-24 p-2 bg-gray-700 rounded text-white text-right" min="0" />
+          </div>
+          <button type="submit"
+            class="mt-4 bg-gradient-to-r from-green-600 to-teal-600 px-4 py-2 rounded-xl hover:from-green-700 hover:to-teal-700 transition-all font-semibold">
+            💸 Calculate & Save Payroll
+          </button>
+        </form>
+
+        <div class="text-center mt-4">
+          <button onclick="resetPayrollForm()"
+            class="px-6 py-2 text-sm font-semibold text-red-400 hover:text-red-500 transition hover:underline">
+            🔁 Reset Payroll Form
+          </button>
+        </div>
+
+        <div class="text-center mt-2">
+          <button onclick="clearPayrollHistory()"
+            class="text-sm font-semibold text-yellow-400 hover:text-yellow-500 transition hover:underline">
+            🗑️ Clear Payroll History
+          </button>
+        </div>
+
+        <div id="payroll-result" class="mt-6 space-y-2 text-lg hidden">
+          <p>Cuddy Haze Pay: <span id="cuddy-pay" class="text-green-400">$0.00</span></p>
+          <p>Dante Vincenzo Pay: <span id="dante-pay" class="text-green-400">$0.00</span></p>
+          <p>Total Logs: <span id="total-logs" class="text-blue-400">0</span></p>
+          <p>Total Payroll: <span id="total-payroll" class="text-yellow-300 font-semibold">$0.00</span></p>
+        </div>
+      </div>
+
+      <div class="glass p-6 rounded-2xl shadow-xl mb-4">
+        <h3 class="text-xl font-semibold mb-3">📅 Monthly Payroll History</h3>
+        <ul id="payroll-history" class="space-y-2 text-gray-300 text-sm max-h-48 overflow-y-auto"></ul>
+
+        <div class="text-center mt-4">
+          <button onclick="exportPayrollCSV()" class="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-700 transition text-white font-semibold">
+            📁 Export Payroll CSV
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    // --- LOGIN SYSTEM ---
+    const users = {
+      "admin": "password123",
+      "employee1": "loginsafe"
+    };
+
+    const loginScreen = document.getElementById("login-screen");
+    const dashboard = document.getElementById("dashboard");
+    const loginError = document.getElementById("login-error");
+
+    document.getElementById("login-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      if (users[username] && users[username] === password) {
+        loginScreen.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+        loginError.classList.add("hidden");
+      } else {
+        loginError.classList.remove("hidden");
+      }
+    });
+
+    function logout() {
+      dashboard.classList.add("hidden");
+      loginScreen.classList.remove("hidden");
+      document.getElementById("login-form").reset();
+    }
+
+    // --- NAVIGATION ---
+    function showSection(id) {
+      document.getElementById('sales').classList.add('hidden');
+      document.getElementById('payroll').classList.add('hidden');
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    // --- SALES LOGIC ---
+    const sales = [];
+    const SALES_TAX_RATE = 0.10;
+    const INCOME_TAX_RATE = 0.15;
+
+    document.getElementById("sale-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById("sale-amount").value);
+      if (!isNaN(amount) && amount > 0) {
+        sales.push(amount);
+        updateReport();
+        document.getElementById("sale-amount").value = "";
+      }
+    });
+
+    function updateReport() {
+      const totalSales = sales.reduce((a, b) => a + b, 0);
+      const salesTax = totalSales * SALES_TAX_RATE;
+      const incomeTax = totalSales * INCOME_TAX_RATE;
+      const netProfit = totalSales - salesTax - incomeTax;
+
+      document.getElementById("total-sales").innerText = `$${totalSales.toFixed(2)}`;
+      document.getElementById("sales-tax").innerText = `$${salesTax.toFixed(2)}`;
+      document.getElementById("income-tax").innerText = `$${incomeTax.toFixed(2)}`;
+      document.getElementById("net-profit").innerText = `$${netProfit.toFixed(2)}`;
+    }
+
+    function resetSales() {
+      sales.length = 0;
+      updateReport();
+    }
+
+    // --- PAYROLL LOGIC ---
+    const PAY_PER_LOG = 500;
+
+    document.getElementById("payroll-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const cuddyLogs = parseInt(document.getElementById("cuddy-logs").value) || 0;
+      const danteLogs = parseInt(document.getElementById("dante-logs").value) || 0;
+
+      const cuddyPay = cuddyLogs * PAY_PER_LOG;
+      const dantePay = danteLogs * PAY_PER_LOG;
+      const totalLogs = cuddyLogs + danteLogs;
+      const totalPayroll = cuddyPay + dantePay;
+
+      document.getElementById("cuddy-pay").innerText = `$${cuddyPay.toFixed(2)}`;
+      document.getElementById("dante-pay").innerText = `$${dantePay.toFixed(2)}`;
+      document.getElementById("total-logs").innerText = totalLogs;
+      document.getElementById("total-payroll").innerText = `$${totalPayroll.toFixed(2)}`;
+
+      document.getElementById("payroll-result").classList.remove("hidden");
+
+      // Save payroll to localStorage by month-year key
+      const now = new Date();
+      const key = `payroll-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+      const record = {
+        date: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`,
+        cuddy: cuddyPay,
+        dante: dantePay,
+        total: totalPayroll
+      };
+      localStorage.setItem(key, JSON.stringify(record));
+      loadPayrollHistory();
+    });
+
+    function resetPayrollForm() {
+      document.getElementById("cuddy-logs").value = 0;
+      document.getElementById("dante-logs").value = 0;
+      document.getElementById("payroll-result").classList.add("hidden");
+    }
+
+    function loadPayrollHistory() {
+      const ul = document.getElementById("payroll-history");
+      ul.innerHTML = "";
+      const keys = Object.keys(localStorage).filter(k => k.startsWith("payroll-")).sort();
+      if (keys.length === 0) {
+        ul.innerHTML = "<li class='italic text-gray-500'>No payroll history saved.</li>";
+        return;
+      }
+      keys.forEach(key => {
+        const record = JSON.parse(localStorage.getItem(key));
+        const li = document.createElement("li");
+        li.className = "bg-gray-800 rounded p-2 flex justify-between";
+        li.innerHTML = `
+          <span>${record.date}</span>
+          <span>Cuddy: $${record.cuddy.toFixed(2)}</span>
+          <span>Dante: $${record.dante.toFixed(2)}</span>
+          <span class="font-semibold">Total: $${record.total.toFixed(2)}</span>
+        `;
+        ul.appendChild(li);
+      });
+    }
+
+    function clearPayrollHistory() {
+      if (confirm("Are you sure you want to clear all payroll history?")) {
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith("payroll-")) {
+            localStorage.removeItem(key);
+          }
+        });
+        loadPayrollHistory();
+        resetPayrollForm();
+      }
+    }
+
+    function exportPayrollCSV() {
+      const rows = [["Month", "Cuddy Pay", "Dante Pay", "Total Payroll"]];
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith("payroll-")) {
+          const record = JSON.parse(localStorage.getItem(key));
+          rows.push([record.date, record.cuddy.toFixed(2), record.dante.toFixed(2), record.total.toFixed(2)]);
+        }
+      });
+      if (rows.length === 1) {
+        alert("No payroll data to export.");
+        return;
+      }
+      const csvContent = rows.map(r => r.join(",")).join("\n");
+      const blob = new Blob([csvContent], {type: 'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `payroll_history_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Initialize with sales report update and payroll history loaded
+    updateReport();
+    loadPayrollHistory();
+  </script>
+</body>
+</html>
+
+
+
