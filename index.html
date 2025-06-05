@@ -1,232 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>FiveM Business Dashboard</title>
-<style>
-  /* Reset and base styles */
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    font-family: 'Poppins', sans-serif;
-    background: #1e1e2f;
-    color: #e0e0e0;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  /* Container for main content */
-  main {
-    max-width: 700px;
-    width: 95%;
-    margin: 40px auto 60px auto;
-    background: #2a2a3f;
-    border-radius: 16px;
-    box-shadow: 0 12px 28px rgba(0,0,0,0.8);
-    padding: 30px 40px 40px 40px;
-  }
-
-  /* Navigation styles */
-  nav {
-    width: 100%;
-    background: #252538;
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    padding: 18px 0;
-    border-radius: 0 0 16px 16px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.7);
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: 700px;
-    z-index: 100;
-  }
-  nav button {
-    background: transparent;
-    border: 2.5px solid #7070ff;
-    color: #a0a0ff;
-    padding: 10px 26px;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    letter-spacing: 0.05em;
-    user-select: none;
-  }
-  nav button:hover {
-    background: #7070ff;
-    color: #1e1e2f;
-    box-shadow: 0 0 10px #8c8cff;
-  }
-  nav button.active {
-    background: #9090ff;
-    color: #1e1e2f;
-    border-color: #9090ff;
-    box-shadow: 0 0 18px #b0b0ff;
-  }
-
-  /* Section styles */
-  section {
-    display: none;
-    animation: fadeIn 0.5s ease forwards;
-  }
-  section.active {
-    display: block;
-  }
-  h2 {
-    font-weight: 700;
-    font-size: 2.2rem;
-    text-align: center;
-    margin-bottom: 30px;
-    letter-spacing: 0.06em;
-    color: #cfcfff;
-    text-shadow: 0 0 6px #7070ffaa;
-  }
-
-  /* Form label and input */
-  label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-    color: #ccccee;
-    letter-spacing: 0.04em;
-  }
-  input, select {
-    width: 100%;
-    padding: 14px 18px;
-    font-size: 1rem;
-    border-radius: 10px;
-    border: none;
-    margin-bottom: 22px;
-    background: #1f1f36;
-    color: #e0e0e0;
-    box-shadow: inset 0 2px 6px #111133;
-    transition: box-shadow 0.3s ease;
-  }
-  input:focus, select:focus {
-    outline: none;
-    box-shadow: 0 0 10px #7070ffcc;
-    background: #2a2a50;
-  }
-
-  /* Buttons */
-  button {
-    width: 100%;
-    padding: 15px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    border-radius: 40px;
-    border: none;
-    background: #6565ff;
-    color: #fff;
-    cursor: pointer;
-    box-shadow: 0 6px 15px #6565ffcc;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    letter-spacing: 0.05em;
-    user-select: none;
-  }
-  button:hover {
-    background: #9090ff;
-    box-shadow: 0 8px 22px #9090ffcc;
-  }
-  button.reset-btn {
-    background: #ff5959;
-    box-shadow: 0 6px 15px #ff5959cc;
-    margin-top: 12px;
-  }
-  button.reset-btn:hover {
-    background: #ff7b7b;
-    box-shadow: 0 8px 22px #ff7b7bcc;
-  }
-
-  /* Result area */
-  .result {
-    margin-top: 18px;
-    background: #1f1f36;
-    padding: 20px 25px;
-    border-radius: 14px;
-    box-shadow: inset 0 0 8px #5555ffaa;
-    font-weight: 700;
-    font-size: 1.2rem;
-    letter-spacing: 0.05em;
-    line-height: 1.6;
-    white-space: pre-line;
-  }
-
-  /* Scrollable log lists */
-  .log-list {
-    max-height: 250px;
-    overflow-y: auto;
-    background: #23234d;
-    border-radius: 14px;
-    padding: 14px 20px;
-    color: #bbbbee;
-    font-size: 0.92rem;
-    box-shadow: inset 0 0 15px #7070ff44;
-    margin-bottom: 14px;
-  }
-  .log-list h4 {
-    margin-top: 0;
-    margin-bottom: 14px;
-    color: #ddddee;
-    font-weight: 700;
-    letter-spacing: 0.07em;
-  }
-  .log-list p {
-    margin: 6px 0;
-  }
-
-  /* Fade in animation */
-  @keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-  }
-
-  /* Responsive */
-  @media (max-width: 480px) {
-    main {
-      padding: 20px 20px 30px 20px;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Business Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background: #222;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
     }
     nav {
-      gap: 14px;
-      padding: 12px 0;
+      background: #444;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 0;
     }
     nav button {
-      padding: 8px 14px;
+      background: #666;
+      border: none;
+      padding: 10px 15px;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    nav button.active, nav button:hover {
+      background: #222;
+    }
+    main {
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    section {
+      display: none;
+    }
+    section.active {
+      display: block;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    button.action-btn {
+      margin-top: 20px;
+      padding: 10px 15px;
+      background: #222;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button.action-btn:hover {
+      background: #555;
+    }
+    .log-list {
+      margin-top: 15px;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      background: #fafafa;
+    }
+    .log-list p {
+      margin: 5px 0;
       font-size: 14px;
     }
-    h2 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
+    .reset-btn {
+      margin-top: 10px;
+      background: #a00;
+      padding: 7px 12px;
+      font-size: 14px;
+      border: none;
+      color: white;
+      cursor: pointer;
     }
-    button {
-      font-size: 1rem;
-      padding: 13px;
+    .reset-btn:hover {
+      background: #c33;
     }
-  }
-</style>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  </style>
 </head>
 <body>
 
+<header>Business Dashboard</header>
+
 <nav>
-  <button id="nav-sales" class="active">Sales Log</button>
-  <button id="nav-payroll">Employee Payroll</button>
-  <button id="nav-profit">Business Profit</button>
+  <button id="nav-sales" class="active">Sales</button>
+  <button id="nav-payroll">Payroll</button>
+  <button id="nav-profit">Profit</button>
   <button id="nav-expenses">Expenses</button>
 </nav>
 
 <main>
-  <!-- SALES LOG SECTION -->
+  <!-- SALES -->
   <section id="sales-section" class="active">
     <h2>Sales Log</h2>
     <label for="sales-date">Date</label>
@@ -234,8 +118,8 @@
     <label for="sales-gross">Gross Sales ($)</label>
     <input type="number" id="sales-gross" min="0" step="0.01" placeholder="Enter gross sales" />
     <label for="sales-tax">Tax Rate (%)</label>
-    <input type="number" id="sales-tax" min="0" max="100" step="0.01" placeholder="Enter tax rate %" />
-    <button id="add-sale-btn">Add Sales Record</button>
+    <input type="number" id="sales-tax" min="0" max="100" step="0.01" placeholder="Enter tax rate" />
+    <button id="add-sale-btn" class="action-btn">Add Sale Record</button>
 
     <div class="log-list" id="sales-log-list">
       <h4>Sales Records</h4>
@@ -243,23 +127,19 @@
     <button id="reset-sales" class="reset-btn">Reset Sales Records</button>
   </section>
 
-  <!-- EMPLOYEE PAYROLL SECTION -->
+  <!-- PAYROLL -->
   <section id="payroll-section">
     <h2>Employee Payroll</h2>
     <label for="payroll-date">Date</label>
     <input type="date" id="payroll-date" />
-    
     <label for="employee-select">Employee</label>
     <select id="employee-select">
-      <option value="cuddy">Cuddy</option>
-      <option value="haze">Haze</option>
-      <option value="dante">Dante Vincenzo</option>
+      <option value="Cuddy Haze">Cuddy Haze</option>
+      <option value="Dante Vincenzo">Dante Vincenzo</option>
     </select>
-
-    <label for="logs-worked">Number of Logs Worked</label>
+    <label for="logs-worked">Logs Worked</label>
     <input type="number" id="logs-worked" min="0" placeholder="Enter logs worked" />
-    
-    <button id="add-payroll-btn">Add Payroll Record</button>
+    <button id="add-payroll-btn" class="action-btn">Add Payroll Record</button>
 
     <div class="log-list" id="payroll-log-list">
       <h4>Payroll Records</h4>
@@ -267,18 +147,18 @@
     <button id="reset-payroll" class="reset-btn">Reset Payroll Records</button>
   </section>
 
-  <!-- BUSINESS PROFIT SECTION -->
+  <!-- PROFIT -->
   <section id="profit-section">
     <h2>Business Profit</h2>
-    <button id="calculate-profit-btn">Calculate Profit</button>
-    <div class="result" id="profit-result"></div>
-
-    <h4>Profit History</h4>
-    <div class="log-list" id="profit-log-list"></div>
-    <button id="reset-profit" class="reset-btn">Reset Profit History</button>
+    <button id="calculate-profit-btn" class="action-btn">Calculate Profit</button>
+    <div id="profit-result" style="margin-top: 15px; font-weight: bold;"></div>
+    <div class="log-list" id="profit-log-list">
+      <h4>Profit History</h4>
+    </div>
+    <button id="reset-profit" class="reset-btn">Reset Profit Records</button>
   </section>
 
-  <!-- EXPENSES SECTION -->
+  <!-- EXPENSES -->
   <section id="expenses-section">
     <h2>Expenses</h2>
     <label for="expense-date">Date</label>
@@ -287,7 +167,7 @@
     <input type="text" id="expense-category" placeholder="E.g. materials, rent, utilities" />
     <label for="expense-amount">Amount ($)</label>
     <input type="number" id="expense-amount" min="0" step="0.01" placeholder="Enter amount spent" />
-    <button id="add-expense-btn">Add Expense Record</button>
+    <button id="add-expense-btn" class="action-btn">Add Expense Record</button>
 
     <div class="log-list" id="expense-log-list">
       <h4>Expense Records</h4>
@@ -323,11 +203,9 @@
 
   Object.keys(navButtons).forEach(key => {
     navButtons[key].addEventListener('click', () => {
-      // Toggle active button
       Object.values(navButtons).forEach(btn => btn.classList.remove('active'));
       navButtons[key].classList.add('active');
 
-      // Show corresponding section
       Object.values(sections).forEach(sec => sec.classList.remove('active'));
       sections[key].classList.add('active');
     });
@@ -389,7 +267,7 @@
 
   addPayrollBtn.onclick = () => {
     const date = payrollDateInput.value;
-    const employeeName = employeeSelect.options[employeeSelect.selectedIndex].text;
+    const employeeName = employeeSelect.value;
     const logs = parseInt(logsWorkedInput.value, 10);
     if (!date || !employeeName || isNaN(logs) || logs < 0) {
       alert('Please enter valid date, select employee, and enter logs worked.');
@@ -514,9 +392,9 @@
 
     // Display results
     profitResult.innerHTML = `
-      Total Net Profit (after taxes): <strong>$${totalNetProfit.toFixed(2)}</strong><br>
-      Total Salary Owed: <strong>$${totalSalary.toFixed(2)}</strong><br>
-      Total Expenses: <strong>$${totalExpenses.toFixed(2)}</strong><br>
+      Total Net Profit (after taxes): $${totalNetProfit.toFixed(2)}<br>
+      Total Salary Owed: $${totalSalary.toFixed(2)}<br>
+      Total Expenses: $${totalExpenses.toFixed(2)}<br>
       <strong>Final Business Profit:</strong> $${finalProfit.toFixed(2)}
     `;
 
@@ -525,9 +403,9 @@
 
   function renderProfitLogs() {
     const profits = getLocalData('profitHistory');
-    profitLogList.innerHTML = '';
+    profitLogList.innerHTML = '<h4>Profit History</h4>';
     if (profits.length === 0) {
-      profitLogList.innerHTML = '<p>No profit records yet.</p>';
+      profitLogList.innerHTML += '<p>No profit records yet.</p>';
       return;
     }
     profits.sort((a,b) => b.date.localeCompare(a.date));
@@ -546,7 +424,7 @@
     }
   };
 
-  // INITIAL RENDER
+  // INITIAL RENDERS
   renderSalesLogs();
   renderPayrollLogs();
   renderExpenseLogs();
@@ -555,6 +433,7 @@
 
 </body>
 </html>
+
 
 
 
