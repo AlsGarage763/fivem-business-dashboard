@@ -5,97 +5,216 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>FiveM Business Dashboard</title>
 <style>
+  /* Reset and base styles */
+  * {
+    box-sizing: border-box;
+  }
   body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    background: #1e1e2f;
+    color: #e0e0e0;
     margin: 0;
     padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
+
+  /* Container for main content */
+  main {
+    max-width: 700px;
+    width: 95%;
+    margin: 40px auto 60px auto;
+    background: #2a2a3f;
+    border-radius: 16px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.8);
+    padding: 30px 40px 40px 40px;
+  }
+
+  /* Navigation styles */
   nav {
-    background: rgba(0,0,0,0.3);
+    width: 100%;
+    background: #252538;
     display: flex;
     justify-content: center;
-    gap: 20px;
-    padding: 15px 0;
-    position: sticky;
+    gap: 25px;
+    padding: 18px 0;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+    position: fixed;
     top: 0;
-    z-index: 10;
-    flex-wrap: wrap;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 700px;
+    z-index: 100;
   }
   nav button {
     background: transparent;
-    border: 2px solid #fff;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 25px;
+    border: 2.5px solid #7070ff;
+    color: #a0a0ff;
+    padding: 10px 26px;
+    border-radius: 30px;
     font-weight: 600;
+    font-size: 16px;
     cursor: pointer;
-    transition: 0.3s ease;
-    white-space: nowrap;
+    transition: all 0.3s ease;
+    letter-spacing: 0.05em;
+    user-select: none;
   }
-  nav button:hover, nav button.active {
-    background: #fff;
-    color: #764ba2;
+  nav button:hover {
+    background: #7070ff;
+    color: #1e1e2f;
+    box-shadow: 0 0 10px #8c8cff;
   }
+  nav button.active {
+    background: #9090ff;
+    color: #1e1e2f;
+    border-color: #9090ff;
+    box-shadow: 0 0 18px #b0b0ff;
+  }
+
+  /* Section styles */
   section {
-    max-width: 600px;
-    margin: 40px auto;
-    background: rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: 25px 30px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    display: none;
+    animation: fadeIn 0.5s ease forwards;
+  }
+  section.active {
+    display: block;
   }
   h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
+    font-weight: 700;
+    font-size: 2.2rem;
     text-align: center;
+    margin-bottom: 30px;
+    letter-spacing: 0.06em;
+    color: #cfcfff;
+    text-shadow: 0 0 6px #7070ffaa;
   }
+
+  /* Form label and input */
   label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-weight: 600;
+    color: #ccccee;
+    letter-spacing: 0.04em;
   }
-  input, select, button {
+  input, select {
     width: 100%;
-    padding: 10px 15px;
-    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 1rem;
+    border-radius: 10px;
     border: none;
-    margin-bottom: 15px;
-    font-size: 16px;
+    margin-bottom: 22px;
+    background: #1f1f36;
+    color: #e0e0e0;
+    box-shadow: inset 0 2px 6px #111133;
+    transition: box-shadow 0.3s ease;
   }
+  input:focus, select:focus {
+    outline: none;
+    box-shadow: 0 0 10px #7070ffcc;
+    background: #2a2a50;
+  }
+
+  /* Buttons */
   button {
-    background: #764ba2;
-    color: white;
+    width: 100%;
+    padding: 15px;
     font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 40px;
     border: none;
+    background: #6565ff;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 6px 15px #6565ffcc;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    letter-spacing: 0.05em;
+    user-select: none;
   }
   button:hover {
-    background: #667eea;
+    background: #9090ff;
+    box-shadow: 0 8px 22px #9090ffcc;
   }
+  button.reset-btn {
+    background: #ff5959;
+    box-shadow: 0 6px 15px #ff5959cc;
+    margin-top: 12px;
+  }
+  button.reset-btn:hover {
+    background: #ff7b7b;
+    box-shadow: 0 8px 22px #ff7b7bcc;
+  }
+
+  /* Result area */
   .result {
-    text-align: center;
-    font-size: 20px;
+    margin-top: 18px;
+    background: #1f1f36;
+    padding: 20px 25px;
+    border-radius: 14px;
+    box-shadow: inset 0 0 8px #5555ffaa;
     font-weight: 700;
-    margin-top: 10px;
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+    white-space: pre-line;
   }
+
+  /* Scrollable log lists */
   .log-list {
-    max-height: 200px;
+    max-height: 250px;
     overflow-y: auto;
-    margin-top: 15px;
-    border-top: 1px solid #ddd;
-    padding-top: 10px;
-    color: #eee;
+    background: #23234d;
+    border-radius: 14px;
+    padding: 14px 20px;
+    color: #bbbbee;
+    font-size: 0.92rem;
+    box-shadow: inset 0 0 15px #7070ff44;
+    margin-bottom: 14px;
+  }
+  .log-list h4 {
+    margin-top: 0;
+    margin-bottom: 14px;
+    color: #ddddee;
+    font-weight: 700;
+    letter-spacing: 0.07em;
   }
   .log-list p {
-    font-size: 14px;
-    margin: 4px 0;
+    margin: 6px 0;
   }
-  .reset-btn {
-    background: #ff4d4d;
-    margin-top: 10px;
+
+  /* Fade in animation */
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    main {
+      padding: 20px 20px 30px 20px;
+    }
+    nav {
+      gap: 14px;
+      padding: 12px 0;
+    }
+    nav button {
+      padding: 8px 14px;
+      font-size: 14px;
+    }
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+    button {
+      font-size: 1rem;
+      padding: 13px;
+    }
   }
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
 
@@ -106,376 +225,337 @@
   <button id="nav-expenses">Expenses</button>
 </nav>
 
-<!-- SALES LOG SECTION -->
-<section id="sales-section">
-  <h2>Sales Log</h2>
-  <label for="sales-date">Date</label>
-  <input type="date" id="sales-date" />
-  <label for="sales-gross">Gross Sales ($)</label>
-  <input type="number" id="sales-gross" min="0" step="0.01" placeholder="Enter gross sales" />
-  <label for="sales-tax">Tax Rate (%)</label>
-  <input type="number" id="sales-tax" min="0" max="100" step="0.01" placeholder="Enter tax rate %" />
-  <button id="add-sale-btn">Add Sales Record</button>
+<main>
+  <!-- SALES LOG SECTION -->
+  <section id="sales-section" class="active">
+    <h2>Sales Log</h2>
+    <label for="sales-date">Date</label>
+    <input type="date" id="sales-date" />
+    <label for="sales-gross">Gross Sales ($)</label>
+    <input type="number" id="sales-gross" min="0" step="0.01" placeholder="Enter gross sales" />
+    <label for="sales-tax">Tax Rate (%)</label>
+    <input type="number" id="sales-tax" min="0" max="100" step="0.01" placeholder="Enter tax rate %" />
+    <button id="add-sale-btn">Add Sales Record</button>
 
-  <div class="log-list" id="sales-log-list">
-    <h4>Sales Records</h4>
-  </div>
-  <button id="reset-sales" class="reset-btn">Reset Sales Records</button>
-</section>
+    <div class="log-list" id="sales-log-list">
+      <h4>Sales Records</h4>
+    </div>
+    <button id="reset-sales" class="reset-btn">Reset Sales Records</button>
+  </section>
 
-<!-- EMPLOYEE PAYROLL SECTION -->
-<section id="payroll-section" style="display:none;">
-  <h2>Employee Payroll</h2>
-  <label for="payroll-date">Date</label>
-  <input type="date" id="payroll-date" />
-  
-  <label for="employee-select">Employee</label>
-  <select id="employee-select">
-    <option value="cuddy">Cuddy</option>
-    <option value="haze">Haze</option>
-    <option value="dante">Dante Vincenzo</option>
-  </select>
+  <!-- EMPLOYEE PAYROLL SECTION -->
+  <section id="payroll-section">
+    <h2>Employee Payroll</h2>
+    <label for="payroll-date">Date</label>
+    <input type="date" id="payroll-date" />
+    
+    <label for="employee-select">Employee</label>
+    <select id="employee-select">
+      <option value="cuddy">Cuddy</option>
+      <option value="haze">Haze</option>
+      <option value="dante">Dante Vincenzo</option>
+    </select>
 
-  <label for="logs-worked">Number of Logs Worked</label>
-  <input type="number" id="logs-worked" min="0" placeholder="Enter logs worked" />
-  
-  <button id="add-payroll-btn">Add Payroll Record</button>
+    <label for="logs-worked">Number of Logs Worked</label>
+    <input type="number" id="logs-worked" min="0" placeholder="Enter logs worked" />
+    
+    <button id="add-payroll-btn">Add Payroll Record</button>
 
-  <div class="log-list" id="payroll-log-list">
-    <h4>Payroll Records</h4>
-  </div>
-  <button id="reset-payroll" class="reset-btn">Reset Payroll Records</button>
-</section>
+    <div class="log-list" id="payroll-log-list">
+      <h4>Payroll Records</h4>
+    </div>
+    <button id="reset-payroll" class="reset-btn">Reset Payroll Records</button>
+  </section>
 
-<!-- BUSINESS PROFIT SECTION -->
-<section id="profit-section" style="display:none;">
-  <h2>Business Profit</h2>
-  <button id="calculate-profit-btn">Calculate Profit</button>
-  <div class="result" id="profit-result"></div>
+  <!-- BUSINESS PROFIT SECTION -->
+  <section id="profit-section">
+    <h2>Business Profit</h2>
+    <button id="calculate-profit-btn">Calculate Profit</button>
+    <div class="result" id="profit-result"></div>
 
-  <h4>Profit History</h4>
-  <div class="log-list" id="profit-log-list"></div>
-  <button id="reset-profit" class="reset-btn">Reset Profit History</button>
-</section>
+    <h4>Profit History</h4>
+    <div class="log-list" id="profit-log-list"></div>
+    <button id="reset-profit" class="reset-btn">Reset Profit History</button>
+  </section>
 
-<!-- EXPENSES SECTION -->
-<section id="expenses-section" style="display:none;">
-  <h2>Expenses</h2>
-  <label for="expense-date">Date</label>
-  <input type="date" id="expense-date" />
-  <label for="expense-category">Category</label>
-  <input type="text" id="expense-category" placeholder="e.g. Materials, Rent" />
-  <label for="expense-amount">Amount ($)</label>
-  <input type="number" id="expense-amount" min="0" step="0.01" placeholder="Enter amount spent" />
-  <button id="add-expense-btn">Add Expense</button>
+  <!-- EXPENSES SECTION -->
+  <section id="expenses-section">
+    <h2>Expenses</h2>
+    <label for="expense-date">Date</label>
+    <input type="date" id="expense-date" />
+    <label for="expense-category">Category</label>
+    <input type="text" id="expense-category" placeholder="E.g. materials, rent, utilities" />
+    <label for="expense-amount">Amount ($)</label>
+    <input type="number" id="expense-amount" min="0" step="0.01" placeholder="Enter amount spent" />
+    <button id="add-expense-btn">Add Expense Record</button>
 
-  <div class="log-list" id="expense-log-list">
-    <h4>Expense Records</h4>
-  </div>
-
-  <div class="result" id="monthly-expense-total"></div>
-  <button id="reset-expenses" class="reset-btn">Reset Expense Records</button>
-</section>
+    <div class="log-list" id="expense-log-list">
+      <h4>Expense Records</h4>
+    </div>
+    <button id="reset-expenses" class="reset-btn">Reset Expense Records</button>
+  </section>
+</main>
 
 <script>
-// Constants
-const PAY_PER_LOG = 500;
+  const PAY_PER_LOG = 500;
 
-// Utility functions for localStorage
-function getLocalData(key) {
-  return JSON.parse(localStorage.getItem(key)) || [];
-}
-
-function setLocalData(key, data) {
-  localStorage.setItem(key, JSON.stringify(data));
-}
-
-// NAVIGATION
-const navSales = document.getElementById('nav-sales');
-const navPayroll = document.getElementById('nav-payroll');
-const navProfit = document.getElementById('nav-profit');
-const navExpenses = document.getElementById('nav-expenses');
-
-const salesSection = document.getElementById('sales-section');
-const payrollSection = document.getElementById('payroll-section');
-const profitSection = document.getElementById('profit-section');
-const expensesSection = document.getElementById('expenses-section');
-
-function setActiveNav(button) {
-  [navSales, navPayroll, navProfit, navExpenses].forEach(btn => btn.classList.remove('active'));
-  button.classList.add('active');
-}
-
-navSales.onclick = () => {
-  setActiveNav(navSales);
-  salesSection.style.display = 'block';
-  payrollSection.style.display = 'none';
-  profitSection.style.display = 'none';
-  expensesSection.style.display = 'none';
-  renderSalesLogs();
-};
-
-navPayroll.onclick = () => {
-  setActiveNav(navPayroll);
-  salesSection.style.display = 'none';
-  payrollSection.style.display = 'block';
-  profitSection.style.display = 'none';
-  expensesSection.style.display = 'none';
-  renderPayrollLogs();
-};
-
-navProfit.onclick = () => {
-  setActiveNav(navProfit);
-  salesSection.style.display = 'none';
-  payrollSection.style.display = 'none';
-  profitSection.style.display = 'block';
-  expensesSection.style.display = 'none';
-  renderProfitLogs();
-};
-
-navExpenses.onclick = () => {
-  setActiveNav(navExpenses);
-  salesSection.style.display = 'none';
-  payrollSection.style.display = 'none';
-  profitSection.style.display = 'none';
-  expensesSection.style.display = 'block';
-  renderExpenseLogs();
-};
-
-// SALES LOG FUNCTIONS
-const salesDateInput = document.getElementById('sales-date');
-const salesGrossInput = document.getElementById('sales-gross');
-const salesTaxInput = document.getElementById('sales-tax');
-const addSaleBtn = document.getElementById('add-sale-btn');
-const salesLogList = document.getElementById('sales-log-list');
-const resetSalesBtn = document.getElementById('reset-sales');
-
-addSaleBtn.onclick = () => {
-  const date = salesDateInput.value;
-  const gross = parseFloat(salesGrossInput.value);
-  const taxRate = parseFloat(salesTaxInput.value);
-  if (!date || isNaN(gross) || isNaN(taxRate)) {
-    alert('Please enter valid date, gross sales, and tax rate.');
-    return;
+  // Helper localStorage functions
+  function getLocalData(key) {
+    return JSON.parse(localStorage.getItem(key)) || [];
   }
-  const sales = getLocalData('salesLogs');
-  sales.push({ date, gross, taxRate });
-  setLocalData('salesLogs', sales);
-  salesDateInput.value = '';
-  salesGrossInput.value = '';
-  salesTaxInput.value = '';
-  renderSalesLogs();
-};
-
-function renderSalesLogs() {
-  const sales = getLocalData('salesLogs');
-  salesLogList.innerHTML = '<h4>Sales Records</h4>';
-  if (sales.length === 0) {
-    salesLogList.innerHTML += '<p>No sales records yet.</p>';
-    return;
+  function setLocalData(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
   }
-  sales.forEach((sale, i) => {
-    salesLogList.innerHTML += `<p>${sale.date} - Gross: $${sale.gross.toFixed(2)}, Tax Rate: ${sale.taxRate}%</p>`;
-  });
-}
 
-resetSalesBtn.onclick = () => {
-  if (confirm('Are you sure you want to reset all sales records?')) {
-    localStorage.removeItem('salesLogs');
-    renderSalesLogs();
-  }
-};
+  // NAVIGATION
+  const navButtons = {
+    sales: document.getElementById('nav-sales'),
+    payroll: document.getElementById('nav-payroll'),
+    profit: document.getElementById('nav-profit'),
+    expenses: document.getElementById('nav-expenses')
+  };
+  const sections = {
+    sales: document.getElementById('sales-section'),
+    payroll: document.getElementById('payroll-section'),
+    profit: document.getElementById('profit-section'),
+    expenses: document.getElementById('expenses-section')
+  };
 
-// PAYROLL FUNCTIONS
-const payrollDateInput = document.getElementById('payroll-date');
-const employeeSelect = document.getElementById('employee-select');
-const logsWorkedInput = document.getElementById('logs-worked');
-const addPayrollBtn = document.getElementById('add-payroll-btn');
-const payrollLogList = document.getElementById('payroll-log-list');
-const resetPayrollBtn = document.getElementById('reset-payroll');
+  Object.keys(navButtons).forEach(key => {
+    navButtons[key].addEventListener('click', () => {
+      // Toggle active button
+      Object.values(navButtons).forEach(btn => btn.classList.remove('active'));
+      navButtons[key].classList.add('active');
 
-addPayrollBtn.onclick = () => {
-  const date = payrollDateInput.value;
-  const employee = employeeSelect.options[employeeSelect.selectedIndex].text;
-  const logs = parseInt(logsWorkedInput.value, 10);
-  if (!date || !employee || isNaN(logs)) {
-    alert('Please enter valid date, select employee, and logs worked.');
-    return;
-  }
-  const payrolls = getLocalData('payrollLogs');
-  payrolls.push({ date, employee, logs });
-  setLocalData('payrollLogs', payrolls);
-  payrollDateInput.value = '';
-  logsWorkedInput.value = '';
-  renderPayrollLogs();
-};
-
-function renderPayrollLogs() {
-  const payrolls = getLocalData('payrollLogs');
-  payrollLogList.innerHTML = '<h4>Payroll Records</h4>';
-  if (payrolls.length === 0) {
-    payrollLogList.innerHTML += '<p>No payroll records yet.</p>';
-    return;
-  }
-  payrolls.forEach((p, i) => {
-    payrollLogList.innerHTML += `<p>${p.date} - ${p.employee} worked ${p.logs} logs ($${(p.logs * PAY_PER_LOG).toFixed(2)})</p>`;
-  });
-}
-
-resetPayrollBtn.onclick = () => {
-  if (confirm('Are you sure you want to reset all payroll records?')) {
-    localStorage.removeItem('payrollLogs');
-    renderPayrollLogs();
-  }
-};
-
-// EXPENSES FUNCTIONS
-const expenseDateInput = document.getElementById('expense-date');
-const expenseCategoryInput = document.getElementById('expense-category');
-const expenseAmountInput = document.getElementById('expense-amount');
-const addExpenseBtn = document.getElementById('add-expense-btn');
-const expenseLogList = document.getElementById('expense-log-list');
-const monthlyExpenseTotal = document.getElementById('monthly-expense-total');
-const resetExpensesBtn = document.getElementById('reset-expenses');
-
-addExpenseBtn.onclick = () => {
-  const date = expenseDateInput.value;
-  const category = expenseCategoryInput.value.trim();
-  const amount = parseFloat(expenseAmountInput.value);
-  if (!date || !category || isNaN(amount)) {
-    alert('Please enter valid date, category, and amount.');
-    return;
-  }
-  const expenses = getLocalData('expenseLogs');
-  expenses.push({ date, category, amount });
-  setLocalData('expenseLogs', expenses);
-  expenseDateInput.value = '';
-  expenseCategoryInput.value = '';
-  expenseAmountInput.value = '';
-  renderExpenseLogs();
-};
-
-function renderExpenseLogs() {
-  const expenses = getLocalData('expenseLogs');
-  expenseLogList.innerHTML = '<h4>Expense Records</h4>';
-  if (expenses.length === 0) {
-    expenseLogList.innerHTML += '<p>No expense records yet.</p>';
-    monthlyExpenseTotal.innerHTML = '';
-    return;
-  }
-  // Sort expenses by date descending
-  expenses.sort((a,b) => b.date.localeCompare(a.date));
-  expenses.forEach((e, i) => {
-    expenseLogList.innerHTML += `<p>${e.date} - ${e.category}: $${e.amount.toFixed(2)}</p>`;
+      // Show corresponding section
+      Object.values(sections).forEach(sec => sec.classList.remove('active'));
+      sections[key].classList.add('active');
+    });
   });
 
-  // Calculate total expenses for current month
-  const today = new Date();
-  const currentMonth = today.toISOString().slice(0,7); // "YYYY-MM"
-  let monthTotal = 0;
-  expenses.forEach(e => {
-    if (e.date.startsWith(currentMonth)) {
-      monthTotal += e.amount;
+  // --- SALES LOG ---
+  const salesDateInput = document.getElementById('sales-date');
+  const salesGrossInput = document.getElementById('sales-gross');
+  const salesTaxInput = document.getElementById('sales-tax');
+  const addSaleBtn = document.getElementById('add-sale-btn');
+  const salesLogList = document.getElementById('sales-log-list');
+  const resetSalesBtn = document.getElementById('reset-sales');
+
+  addSaleBtn.onclick = () => {
+    const date = salesDateInput.value;
+    const gross = parseFloat(salesGrossInput.value);
+    const taxRate = parseFloat(salesTaxInput.value);
+    if (!date || isNaN(gross) || gross < 0 || isNaN(taxRate) || taxRate < 0 || taxRate > 100) {
+      alert('Please enter valid date, gross sales, and tax rate (0-100).');
+      return;
     }
-  });
+    const sales = getLocalData('salesLogs');
+    sales.push({ date, gross, taxRate });
+    setLocalData('salesLogs', sales);
+    salesDateInput.value = '';
+    salesGrossInput.value = '';
+    salesTaxInput.value = '';
+    renderSalesLogs();
+  };
 
-  monthlyExpenseTotal.innerHTML = `<p><strong>Total Expenses for ${currentMonth}:</strong> $${monthTotal.toFixed(2)}</p>`;
-}
+  function renderSalesLogs() {
+    const sales = getLocalData('salesLogs');
+    salesLogList.innerHTML = '<h4>Sales Records</h4>';
+    if (sales.length === 0) {
+      salesLogList.innerHTML += '<p>No sales records yet.</p>';
+      return;
+    }
+    sales.sort((a,b) => b.date.localeCompare(a.date));
+    sales.forEach(sale => {
+      const net = sale.gross * (1 - sale.taxRate / 100);
+      salesLogList.innerHTML += `<p><strong>${sale.date}</strong> - Gross: $${sale.gross.toFixed(2)}, Tax: ${sale.taxRate}%, Net: $${net.toFixed(2)}</p>`;
+    });
+  }
 
-resetExpensesBtn.onclick = () => {
-  if (confirm('Are you sure you want to reset all expense records?')) {
-    localStorage.removeItem('expenseLogs');
+  resetSalesBtn.onclick = () => {
+    if (confirm('Are you sure you want to reset all sales records?')) {
+      localStorage.removeItem('salesLogs');
+      renderSalesLogs();
+    }
+  };
+
+  // --- EMPLOYEE PAYROLL ---
+  const payrollDateInput = document.getElementById('payroll-date');
+  const employeeSelect = document.getElementById('employee-select');
+  const logsWorkedInput = document.getElementById('logs-worked');
+  const addPayrollBtn = document.getElementById('add-payroll-btn');
+  const payrollLogList = document.getElementById('payroll-log-list');
+  const resetPayrollBtn = document.getElementById('reset-payroll');
+
+  addPayrollBtn.onclick = () => {
+    const date = payrollDateInput.value;
+    const employeeName = employeeSelect.options[employeeSelect.selectedIndex].text;
+    const logs = parseInt(logsWorkedInput.value, 10);
+    if (!date || !employeeName || isNaN(logs) || logs < 0) {
+      alert('Please enter valid date, select employee, and enter logs worked.');
+      return;
+    }
+    const payrolls = getLocalData('payrollLogs');
+    payrolls.push({ date, employee: employeeName, logs });
+    setLocalData('payrollLogs', payrolls);
+    payrollDateInput.value = '';
+    logsWorkedInput.value = '';
+    renderPayrollLogs();
+  };
+
+  function renderPayrollLogs() {
+    const payrolls = getLocalData('payrollLogs');
+    payrollLogList.innerHTML = '<h4>Payroll Records</h4>';
+    if (payrolls.length === 0) {
+      payrollLogList.innerHTML += '<p>No payroll records yet.</p>';
+      return;
+    }
+    payrolls.sort((a,b) => b.date.localeCompare(a.date));
+    payrolls.forEach(p => {
+      payrollLogList.innerHTML += `<p><strong>${p.date}</strong> - ${p.employee} worked ${p.logs} logs ($${(p.logs * PAY_PER_LOG).toFixed(2)})</p>`;
+    });
+  }
+
+  resetPayrollBtn.onclick = () => {
+    if (confirm('Are you sure you want to reset all payroll records?')) {
+      localStorage.removeItem('payrollLogs');
+      renderPayrollLogs();
+    }
+  };
+
+  // --- EXPENSES ---
+  const expenseDateInput = document.getElementById('expense-date');
+  const expenseCategoryInput = document.getElementById('expense-category');
+  const expenseAmountInput = document.getElementById('expense-amount');
+  const addExpenseBtn = document.getElementById('add-expense-btn');
+  const expenseLogList = document.getElementById('expense-log-list');
+  const resetExpensesBtn = document.getElementById('reset-expenses');
+
+  addExpenseBtn.onclick = () => {
+    const date = expenseDateInput.value;
+    const category = expenseCategoryInput.value.trim();
+    const amount = parseFloat(expenseAmountInput.value);
+    if (!date || !category || isNaN(amount) || amount < 0) {
+      alert('Please enter valid date, category, and amount.');
+      return;
+    }
+    const expenses = getLocalData('expenseLogs');
+    expenses.push({ date, category, amount });
+    setLocalData('expenseLogs', expenses);
+    expenseDateInput.value = '';
+    expenseCategoryInput.value = '';
+    expenseAmountInput.value = '';
     renderExpenseLogs();
-  }
-};
+  };
 
-// BUSINESS PROFIT FUNCTIONS
-const calculateProfitBtn = document.getElementById('calculate-profit-btn');
-const profitResult = document.getElementById('profit-result');
-const profitLogList = document.getElementById('profit-log-list');
-const resetProfitBtn = document.getElementById('reset-profit');
-
-function calculateBusinessProfit() {
-  const sales = getLocalData('salesLogs');
-  const payrolls = getLocalData('payrollLogs');
-  const expenses = getLocalData('expenseLogs');
-
-  if (sales.length === 0) {
-    alert('No sales records to calculate profit.');
-    return;
+  function renderExpenseLogs() {
+    const expenses = getLocalData('expenseLogs');
+    expenseLogList.innerHTML = '<h4>Expense Records</h4>';
+    if (expenses.length === 0) {
+      expenseLogList.innerHTML += '<p>No expense records yet.</p>';
+      return;
+    }
+    expenses.sort((a,b) => b.date.localeCompare(a.date));
+    expenses.forEach(e => {
+      expenseLogList.innerHTML += `<p><strong>${e.date}</strong> - ${e.category}: $${e.amount.toFixed(2)}</p>`;
+    });
   }
 
-  // Sum net sales after taxes
-  let totalNetProfit = 0;
-  sales.forEach(sale => {
-    const net = sale.gross * (1 - sale.taxRate / 100);
-    totalNetProfit += net;
-  });
+  resetExpensesBtn.onclick = () => {
+    if (confirm('Are you sure you want to reset all expense records?')) {
+      localStorage.removeItem('expenseLogs');
+      renderExpenseLogs();
+    }
+  };
 
-  // Sum total salary owed
-  let totalSalary = 0;
-  payrolls.forEach(payroll => {
-    totalSalary += payroll.logs * PAY_PER_LOG;
-  });
+  // --- BUSINESS PROFIT ---
+  const calculateProfitBtn = document.getElementById('calculate-profit-btn');
+  const profitResult = document.getElementById('profit-result');
+  const profitLogList = document.getElementById('profit-log-list');
+  const resetProfitBtn = document.getElementById('reset-profit');
 
-  // Sum total expenses (all expenses)
-  let totalExpenses = 0;
-  expenses.forEach(exp => {
-    totalExpenses += exp.amount;
-  });
+  function calculateBusinessProfit() {
+    const sales = getLocalData('salesLogs');
+    const payrolls = getLocalData('payrollLogs');
+    const expenses = getLocalData('expenseLogs');
 
-  // Calculate final business profit
-  const finalProfit = totalNetProfit - totalSalary - totalExpenses;
+    if (sales.length === 0) {
+      alert('No sales records to calculate profit.');
+      return;
+    }
 
-  // Save profit record with today's date
-  const today = new Date().toISOString().split('T')[0];
-  const profitHistory = getLocalData('profitHistory');
-  profitHistory.push({ date: today, netProfit: totalNetProfit, totalSalary, totalExpenses, finalProfit });
-  setLocalData('profitHistory', profitHistory);
+    // Sum net sales after taxes
+    let totalNetProfit = 0;
+    sales.forEach(sale => {
+      const net = sale.gross * (1 - sale.taxRate / 100);
+      totalNetProfit += net;
+    });
 
-  // Display results
-  profitResult.innerHTML = `
-    <p>Total Net Profit (after taxes): <strong>$${totalNetProfit.toFixed(2)}</strong></p>
-    <p>Total Salary Owed: <strong>$${totalSalary.toFixed(2)}</strong></p>
-    <p>Total Expenses: <strong>$${totalExpenses.toFixed(2)}</strong></p>
-    <p><strong>Final Business Profit:</strong> $${finalProfit.toFixed(2)}</p>
-  `;
+    // Sum total salary owed
+    let totalSalary = 0;
+    payrolls.forEach(payroll => {
+      totalSalary += payroll.logs * PAY_PER_LOG;
+    });
 
-  renderProfitLogs();
-}
+    // Sum total expenses (all expenses)
+    let totalExpenses = 0;
+    expenses.forEach(exp => {
+      totalExpenses += exp.amount;
+    });
 
-function renderProfitLogs() {
-  const profits = getLocalData('profitHistory');
-  profitLogList.innerHTML = '<h4>Profit History</h4>';
-  if (profits.length === 0) {
-    profitLogList.innerHTML += '<p>No profit records yet.</p>';
-    return;
-  }
-  profits.forEach(p => {
-    profitLogList.innerHTML += `<p><strong>${p.date}</strong> — Net Profit: $${p.netProfit.toFixed(2)}, Salary: $${p.totalSalary.toFixed(2)}, Expenses: $${p.totalExpenses.toFixed(2)}, Final Profit: $${p.finalProfit.toFixed(2)}</p>`;
-  });
-}
+    // Calculate final business profit
+    const finalProfit = totalNetProfit - totalSalary - totalExpenses;
 
-calculateProfitBtn.onclick = calculateBusinessProfit;
+    // Save profit record with today's date
+    const today = new Date().toISOString().split('T')[0];
+    const profitHistory = getLocalData('profitHistory');
+    profitHistory.push({ date: today, netProfit: totalNetProfit, totalSalary, totalExpenses, finalProfit });
+    setLocalData('profitHistory', profitHistory);
 
-resetProfitBtn.onclick = () => {
-  if (confirm('Are you sure you want to reset profit history?')) {
-    localStorage.removeItem('profitHistory');
-    profitResult.innerHTML = '';
+    // Display results
+    profitResult.innerHTML = `
+      Total Net Profit (after taxes): <strong>$${totalNetProfit.toFixed(2)}</strong><br>
+      Total Salary Owed: <strong>$${totalSalary.toFixed(2)}</strong><br>
+      Total Expenses: <strong>$${totalExpenses.toFixed(2)}</strong><br>
+      <strong>Final Business Profit:</strong> $${finalProfit.toFixed(2)}
+    `;
+
     renderProfitLogs();
   }
-};
 
-// INITIAL RENDER CALLS
-renderSalesLogs();
-renderPayrollLogs();
-renderProfitLogs();
-renderExpenseLogs();
+  function renderProfitLogs() {
+    const profits = getLocalData('profitHistory');
+    profitLogList.innerHTML = '';
+    if (profits.length === 0) {
+      profitLogList.innerHTML = '<p>No profit records yet.</p>';
+      return;
+    }
+    profits.sort((a,b) => b.date.localeCompare(a.date));
+    profits.forEach(p => {
+      profitLogList.innerHTML += `<p><strong>${p.date}</strong> — Net Profit: $${p.netProfit.toFixed(2)}, Salary: $${p.totalSalary.toFixed(2)}, Expenses: $${p.totalExpenses.toFixed(2)}, Final: $${p.finalProfit.toFixed(2)}</p>`;
+    });
+  }
 
+  calculateProfitBtn.onclick = calculateBusinessProfit;
+
+  resetProfitBtn.onclick = () => {
+    if (confirm('Are you sure you want to reset all profit records?')) {
+      localStorage.removeItem('profitHistory');
+      profitResult.innerHTML = '';
+      renderProfitLogs();
+    }
+  };
+
+  // INITIAL RENDER
+  renderSalesLogs();
+  renderPayrollLogs();
+  renderExpenseLogs();
+  renderProfitLogs();
 </script>
 
 </body>
 </html>
+
 
 
 
