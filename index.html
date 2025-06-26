@@ -518,7 +518,7 @@
     function renderPayrollTable() {
       payrollTableBody.innerHTML = '';
       payrollData.forEach(entry => {
-        const amount = calculatePayrollAmount(entry.logs);
+        const amount = calculatePayrollAmount(entry, entry.logs);
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${entry.employee}</td><td>${entry.logs}</td><td>$${formatNumber(amount)}</td><td>${entry.month}</td>`;
         payrollTableBody.appendChild(tr);
