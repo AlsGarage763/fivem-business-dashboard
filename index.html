@@ -553,8 +553,9 @@
         renderPayrollTable();
       }
     });
-    function calculatePayrollAmount(logs) {
-      return logs * 1000; // Example: $10 per log
+    function calculatePayrollAmount(employee, logs) {
+  const ratePerLog = employee.name === "John Delporte" ? 1200 : 1000;
+  return logs * ratePerLog;
     }
 
     // --- EXPENSES PAGE ---
