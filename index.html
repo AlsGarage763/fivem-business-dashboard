@@ -3,720 +3,764 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Business Dashboard</title>
+<title>Animated Payroll & Profit Dashboard with Themes</title>
 <style>
-  /* Reset */
+  /* CSS RESET */
   *, *::before, *::after {
     box-sizing: border-box;
   }
 
   body {
+    margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0; padding: 0;
-    background: #f4f7fa;
-    color: #333;
-    min-height: 100vh;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  :root {
+    /* Light Theme */
+    --bg-light: #f5f7fa;
+    --card-bg-light: #ffffff;
+    --text-light: #222222;
+    --accent-light: #2e8b57;
+
+    /* Dark Theme */
+    --bg-dark: #121212;
+    --card-bg-dark: #1e1e1e;
+    --text-dark: #e1e1e1;
+    --accent-dark: #5dbbff;
+
+    /* Custom Theme (Warm) */
+    --bg-warm: #fff8f0;
+    --card-bg-warm: #fff0e5;
+    --text-warm: #5a2e00;
+    --accent-warm: #ff7043;
+  }
+
+  /* Default theme variables (light) */
+  :root {
+    --bg: var(--bg-light);
+    --card-bg: var(--card-bg-light);
+    --text: var(--text-light);
+    --accent: var(--accent-light);
+  }
+
+  /* Dark theme class */
+  body.dark-theme {
+    --bg: var(--bg-dark);
+    --card-bg: var(--card-bg-dark);
+    --text: var(--text-dark);
+    --accent: var(--accent-dark);
+  }
+
+  /* Warm theme class */
+  body.warm-theme {
+    --bg: var(--bg-warm);
+    --card-bg: var(--card-bg-warm);
+    --text: var(--text-warm);
+    --accent: var(--accent-warm);
+  }
+
+  /* Container */
+  .container {
+    max-width: 1100px;
+    margin: 2rem auto 4rem;
+    padding: 0 1rem;
+  }
+
+  /* Header & Theme Selector */
+  header {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 40px 20px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
   }
 
-  #login, #dashboard {
-    background: white;
-    width: 100%;
-    max-width: 900px;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    padding: 30px 40px 40px;
-  }
-
-  h2 {
-    margin-top: 0;
+  header h1 {
     font-weight: 700;
-    color: #0a3d62;
+    font-size: 2rem;
   }
 
-  /* Login */
-  #login form {
+  .theme-selector {
     display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
-
-  #login label {
+    gap: 0.75rem;
+    align-items: center;
     font-weight: 600;
-    margin-bottom: 6px;
-    color: #34495e;
   }
 
-  #login input[type="text"],
-  #login input[type="password"] {
-    padding: 12px 14px;
-    font-size: 1rem;
-    border: 2px solid #d1d8e0;
-    border-radius: 6px;
-    transition: border-color 0.3s;
-  }
-
-  #login input[type="text"]:focus,
-  #login input[type="password"]:focus {
-    outline: none;
-    border-color: #0a3d62;
-    background: #f0f4f8;
-  }
-
-  #login button {
-    background-color: #0a3d62;
-    color: white;
-    font-weight: 700;
-    padding: 14px;
-    border: none;
-    border-radius: 7px;
-    font-size: 1.1rem;
+  .theme-selector label {
     cursor: pointer;
-    transition: background-color 0.3s;
+    user-select: none;
+    transition: color 0.3s ease;
   }
 
-  #login button:hover {
-    background-color: #07406a;
+  .theme-selector input[type="radio"] {
+    display: none;
   }
 
-  /* Dashboard tabs */
+  .theme-selector label span {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    transition: background-color 0.4s ease;
+  }
+
+  /* Color dots for themes */
+  label[for="theme-light"] span {
+    background: var(--accent-light);
+  }
+  label[for="theme-dark"] span {
+    background: var(--accent-dark);
+  }
+  label[for="theme-warm"] span {
+    background: var(--accent-warm);
+  }
+
+  /* Selected theme indicator */
+  .theme-selector input[type="radio"]:checked + label span {
+    box-shadow: 0 0 0 4px var(--accent);
+  }
+
+  /* Card style */
+  .card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.8s forwards;
+  }
+  .card:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+  .card:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+  .card:nth-child(4) {
+    animation-delay: 0.3s;
+  }
+
+  /* Tabs */
   .tabs {
     display: flex;
-    gap: 12px;
-    margin-bottom: 30px;
-    border-bottom: 3px solid #e1e8f0;
+    gap: 1rem;
+    margin-bottom: 1rem;
   }
-
   .tab {
-    padding: 14px 28px;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    color: #34495e;
-    border-radius: 6px 6px 0 0;
-    background-color: #d6dbeb;
-    user-select: none;
-    transition: background-color 0.3s, color 0.3s;
-  }
-
-  .tab[aria-selected="true"] {
-    background-color: #0a3d62;
-    color: #fff;
-    box-shadow: 0 -3px 0 #ffb142 inset;
-  }
-
-  .tab:focus {
-    outline: 3px solid #ffb142;
-    outline-offset: 3px;
-  }
-
-  /* Tab panel */
-  [role="tabpanel"] {
-    animation: fadeIn 0.3s ease forwards;
-  }
-
-  @keyframes fadeIn {
-    from {opacity: 0; transform: translateY(8px);}
-    to {opacity: 1; transform: translateY(0);}
-  }
-
-  /* Forms inside dashboard */
-  form {
-    margin-bottom: 24px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px 24px;
-    align-items: flex-end;
-  }
-
-  label {
-    font-weight: 600;
-    color: #34495e;
-  }
-
-  input[type="text"], input[type="month"], input[type="number"], select {
-    padding: 10px 12px;
-    font-size: 1rem;
-    border: 2px solid #d1d8e0;
-    border-radius: 6px;
-    min-width: 160px;
-    transition: border-color 0.3s;
-  }
-
-  input[type="text"]:focus,
-  input[type="month"]:focus,
-  input[type="number"]:focus,
-  select:focus {
-    outline: none;
-    border-color: #0a3d62;
-    background: #f0f4f8;
-  }
-
-  button.add-btn {
-    background-color: #0a3d62;
-    color: white;
-    font-weight: 700;
-    padding: 12px 26px;
+    background: transparent;
     border: none;
-    border-radius: 7px;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.3s;
+    color: var(--text);
+    border-bottom: 3px solid transparent;
+    transition: border-color 0.3s ease, color 0.3s ease;
+    user-select: none;
   }
-
-  button.add-btn:hover {
-    background-color: #07406a;
+  .tab[aria-selected="true"] {
+    border-bottom-color: var(--accent);
+    color: var(--accent);
+  }
+  .tab:hover:not([aria-selected="true"]) {
+    color: var(--accent);
   }
 
   /* Tables */
   table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    margin-top: 1rem;
+    font-size: 0.95rem;
   }
 
   th, td {
-    padding: 14px 18px;
+    padding: 0.65rem 0.75rem;
+    border-bottom: 1px solid var(--accent);
     text-align: left;
-    font-size: 0.95rem;
-    border-bottom: 1px solid #e1e8f0;
-    color: #3a4750;
   }
-
   th {
-    background-color: #d6dbeb;
-    font-weight: 700;
-    user-select: none;
-  }
-
-  tr:last-child td {
-    border-bottom: none;
-  }
-
-  /* Delete buttons */
-  .delete-btn {
-    background: #ff6b6b;
-    border: none;
-    color: white;
-    padding: 6px 12px;
     font-weight: 600;
-    font-size: 0.85rem;
+  }
+  tbody tr {
+    transition: background-color 0.3s ease;
+  }
+  tbody tr:hover {
+    background-color: var(--accent);
+    color: var(--card-bg);
+  }
+
+  /* Forms */
+  form {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  input, select {
+    padding: 0.45rem 0.75rem;
     border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    border: 1.8px solid var(--accent);
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease;
+    background-color: var(--card-bg);
+    color: var(--text);
+    min-width: 130px;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
   }
 
-  .delete-btn:hover {
-    background: #e24343;
-  }
-
-  /* Profit section */
-  .profit-summary {
-    background: #eaf0f8;
-    padding: 20px 30px;
-    border-radius: 10px;
-    box-shadow: inset 0 0 10px #b6c1d1;
-    max-width: 420px;
-  }
-
-  .profit-summary div {
-    margin-bottom: 14px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #1b2838;
-  }
-
-  .profit-summary div span {
-    float: right;
+  button {
+    padding: 0.55rem 1.2rem;
+    background-color: var(--accent);
+    border: none;
+    border-radius: 8px;
+    color: var(--card-bg);
     font-weight: 700;
-    color: #0a3d62;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.15s ease;
+  }
+  button:hover {
+    background-color: darken(var(--accent), 10%);
+    transform: scale(1.05);
+  }
+  button:active {
+    transform: scale(0.95);
   }
 
-  /* Tax input */
-  #tax-container {
+  /* Delete button */
+  .delete-btn {
+    background: transparent;
+    font-size: 1.3rem;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.3s ease;
+    color: var(--accent);
+  }
+  .delete-btn:hover {
+    color: #c0392b;
+  }
+
+  /* Payroll total and profit display */
+  .summary {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+  }
+  .summary span {
+    font-weight: 900;
+    color: var(--accent);
+  }
+
+  /* Tax slider */
+  .tax-control {
+    margin-top: 1rem;
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-top: 8px;
+    gap: 0.8rem;
+    user-select: none;
   }
-
-  #tax {
-    width: 70px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    text-align: center;
-    border: 2px solid #d1d8e0;
-    border-radius: 6px;
-    padding: 8px 10px;
-    transition: border-color 0.3s;
-  }
-
-  #tax:focus {
+  .tax-control input[type=range] {
+    -webkit-appearance: none;
+    width: 150px;
+    height: 6px;
+    border-radius: 4px;
+    background: var(--accent);
     outline: none;
-    border-color: #0a3d62;
-    background: #f0f4f8;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .tax-control input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 2.5px solid var(--accent);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: -8px;
+  }
+  .tax-control input[type=range]:focus::-webkit-slider-thumb {
+    background-color: var(--accent);
   }
 
-  #tax-display {
+  .tax-control label {
     font-weight: 700;
-    font-size: 1.1rem;
-    color: #0a3d62;
+  }
+  .tax-percent {
+    font-weight: 900;
+    color: var(--accent);
+    min-width: 40px;
+    text-align: center;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   /* Responsive */
-  @media (max-width: 700px) {
+  @media (max-width: 768px) {
+    .tabs {
+      flex-wrap: wrap;
+    }
     form {
       flex-direction: column;
-      gap: 14px;
+      gap: 0.8rem;
     }
-
-    input[type="text"], input[type="month"], input[type="number"], select {
+    input, select {
       min-width: 100%;
-    }
-
-    .profit-summary {
-      max-width: 100%;
     }
   }
 </style>
 </head>
 <body>
+<div class="container">
+  <header>
+    <h1>Payroll & Profit Dashboard</h1>
+    <fieldset class="theme-selector" aria-label="Select Color Theme">
+      <legend>Theme:</legend>
+      <input type="radio" name="theme" id="theme-light" value="light" checked />
+      <label for="theme-light" title="Light Theme"><span></span></label>
 
-<div id="login" role="main" aria-label="Login section">
-  <h2>Login</h2>
-  <form aria-describedby="login-instructions">
-    <p id="login-instructions" style="color:#666;">Enter your username and password to access the dashboard.</p>
-    <label for="username">Username</label>
-    <input id="username" type="text" autocomplete="username" required aria-required="true" />
-    <label for="password">Password</label>
-    <input id="password" type="password" autocomplete="current-password" required aria-required="true" />
-    <button type="submit" aria-label="Login">Login</button>
-  </form>
-</div>
+      <input type="radio" name="theme" id="theme-dark" value="dark" />
+      <label for="theme-dark" title="Dark Theme"><span></span></label>
 
-<div id="dashboard" hidden>
-  <div class="tabs" role="tablist" aria-label="Main dashboard tabs">
-    <button class="tab" role="tab" aria-selected="true" aria-controls="sales-tab" id="sales-tab-btn" tabindex="0">Sales</button>
-    <button class="tab" role="tab" aria-selected="false" aria-controls="employees-tab" id="employees-tab-btn" tabindex="-1">Employees</button>
-    <button class="tab" role="tab" aria-selected="false" aria-controls="payroll-tab" id="payroll-tab-btn" tabindex="-1">Payroll</button>
-    <button class="tab" role="tab" aria-selected="false" aria-controls="expenses-tab" id="expenses-tab-btn" tabindex="-1">Expenses</button>
-    <button class="tab" role="tab" aria-selected="false" aria-controls="profit-tab" id="profit-tab-btn" tabindex="-1">Profit</button>
-  </div>
+      <input type="radio" name="theme" id="theme-warm" value="warm" />
+      <label for="theme-warm" title="Warm Theme"><span></span></label>
+    </fieldset>
+  </header>
 
-  <section id="sales-tab" role="tabpanel" aria-labelledby="sales-tab-btn">
+  <nav role="tablist" aria-label="Dashboard Sections" class="tabs">
+    <button role="tab" aria-selected="true" aria-controls="panel-sales" id="tab-sales" class="tab" tabindex="0">Sales</button>
+    <button role="tab" aria-selected="false" aria-controls="panel-employees" id="tab-employees" class="tab" tabindex="-1">Employees</button>
+    <button role="tab" aria-selected="false" aria-controls="panel-expenses" id="tab-expenses" class="tab" tabindex="-1">Expenses</button>
+    <button role="tab" aria-selected="false" aria-controls="panel-payroll" id="tab-payroll" class="tab" tabindex="-1">Payroll</button>
+  </nav>
+
+  <section id="panel-sales" role="tabpanel" aria-labelledby="tab-sales" class="card">
     <h2>Sales</h2>
-    <form id="sales-form" aria-label="Add sales data">
-      <label for="sale-month">Month</label>
-      <input id="sale-month" type="month" required />
-      <label for="sale-amount">Amount</label>
-      <input id="sale-amount" type="number" min="0" step="0.01" required />
-      <button type="submit" class="add-btn">Add Sale</button>
+    <form id="sales-form" aria-label="Add Sales Data">
+      <input type="month" id="sale-month" aria-label="Sale Month" required />
+      <input type="number" id="sale-amount" aria-label="Sale Amount" placeholder="Amount" min="0" step="0.01" required />
+      <button type="submit">Add Sale</button>
     </form>
-    <table aria-label="Sales records">
+    <table aria-live="polite" aria-label="Sales Data Table">
       <thead>
-        <tr><th>Month</th><th>Amount</th><th>Actions</th></tr>
+        <tr><th>Month</th><th>Amount</th><th>Delete</th></tr>
       </thead>
-      <tbody id="sales-table-body"></tbody>
+      <tbody id="sales-tbody"></tbody>
     </table>
   </section>
 
-  <section id="employees-tab" role="tabpanel" aria-labelledby="employees-tab-btn" hidden>
+  <section id="panel-employees" role="tabpanel" aria-labelledby="tab-employees" class="card" hidden>
     <h2>Employees</h2>
-    <form id="employees-form" aria-label="Add employee data">
-      <label for="employee-name">Name</label>
-      <input id="employee-name" type="text" required />
-      <label for="employee-hire-date">Hire Date</label>
-      <input id="employee-hire-date" type="month" required />
-      <label for="employee-gender">Gender</label>
-      <select id="employee-gender" required>
-        <option value="" disabled selected>Select gender</option>
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
-        <option>Prefer not to say</option>
+    <form id="employees-form" aria-label="Add Employee">
+      <input type="text" id="employee-name" aria-label="Employee Name" placeholder="Name" required />
+      <input type="date" id="employee-hiredate" aria-label="Hire Date" required />
+      <select id="employee-gender" aria-label="Gender" required>
+        <option value="" disabled selected>Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
       </select>
-      <label for="employee-logs">Logs</label>
-      <input id="employee-logs" type="number" min="0" required />
-      <button type="submit" class="add-btn">Add Employee</button>
+      <input type="number" id="employee-logs" aria-label="Work Logs" placeholder="Work Logs" min="0" required />
+      <button type="submit">Add Employee</button>
     </form>
-    <table aria-label="Employee records">
+    <table aria-live="polite" aria-label="Employees Data Table">
       <thead>
-        <tr><th>Name</th><th>Hire Date</th><th>Gender</th><th>Logs</th><th>Actions</th></tr>
+        <tr><th>Name</th><th>Hire Date</th><th>Gender</th><th>Work Logs</th><th>Delete</th></tr>
       </thead>
-      <tbody id="employees-table-body"></tbody>
+      <tbody id="employees-tbody"></tbody>
     </table>
   </section>
 
-  <section id="payroll-tab" role="tabpanel" aria-labelledby="payroll-tab-btn" hidden>
-    <h2>Payroll</h2>
-    <table aria-label="Payroll details">
-      <thead>
-        <tr><th>Name</th><th>Logs</th><th>Pay Per Log</th><th>Total Pay</th></tr>
-      </thead>
-      <tbody id="payroll-table-body"></tbody>
-      <tfoot>
-        <tr>
-          <th colspan="3" style="text-align:right; padding-right: 16px;">Total Payroll:</th>
-          <th id="payroll-total-display"></th>
-        </tr>
-      </tfoot>
-    </table>
-  </section>
-
-  <section id="expenses-tab" role="tabpanel" aria-labelledby="expenses-tab-btn" hidden>
+  <section id="panel-expenses" role="tabpanel" aria-labelledby="tab-expenses" class="card" hidden>
     <h2>Expenses</h2>
-    <form id="expenses-form" aria-label="Add expense data">
-      <label for="expense-month">Month</label>
-      <input id="expense-month" type="month" required />
-      <label for="expense-amount">Amount</label>
-      <input id="expense-amount" type="number" min="0" step="0.01" required />
-      <button type="submit" class="add-btn">Add Expense</button>
+    <form id="expenses-form" aria-label="Add Expense">
+      <input type="month" id="expense-month" aria-label="Expense Month" required />
+      <input type="number" id="expense-amount" aria-label="Expense Amount" placeholder="Amount" min="0" step="0.01" required />
+      <button type="submit">Add Expense</button>
     </form>
-    <table aria-label="Expenses records">
+    <table aria-live="polite" aria-label="Expenses Data Table">
       <thead>
-        <tr><th>Month</th><th>Amount</th><th>Actions</th></tr>
+        <tr><th>Month</th><th>Amount</th><th>Delete</th></tr>
       </thead>
-      <tbody id="expenses-table-body"></tbody>
+      <tbody id="expenses-tbody"></tbody>
     </table>
   </section>
 
-  <section id="profit-tab" role="tabpanel" aria-labelledby="profit-tab-btn" hidden>
-    <h2>Profit</h2>
-    <div class="profit-summary" aria-live="polite" aria-atomic="true">
-      <div>Total Sales: <span id="total-sales-display">0.00</span></div>
-      <div>Total Payroll: <span id="total-payroll-display">0.00</span></div>
-      <div>Total Expenses: <span id="total-expenses-display">0.00</span></div>
-      <div>
-        Tax Rate:
-        <div id="tax-container">
-          <input id="tax" type="number" min="0" max="100" step="1" value="30" aria-label="Tax percentage" />
-          <span id="tax-display">30%</span>
-        </div>
-      </div>
-      <div>Profit After Tax: <span id="profit-after-tax-display">0.00</span></div>
+  <section id="panel-payroll" role="tabpanel" aria-labelledby="tab-payroll" class="card" hidden>
+    <h2>Payroll</h2>
+    <table aria-live="polite" aria-label="Payroll Table">
+      <thead>
+        <tr><th>Name</th><th>Work Logs</th><th>Pay per Log</th><th>Total Pay</th></tr>
+      </thead>
+      <tbody id="payroll-tbody"></tbody>
+    </table>
+    <p class="summary">Total Payroll: <span id="payroll-total">$0.00</span></p>
+
+    <div class="tax-control">
+      <label for="tax-input">Tax %:</label>
+      <input type="range" id="tax-input" min="0" max="100" value="30" aria-valuemin="0" aria-valuemax="100" aria-valuenow="30" aria-label="Tax Percentage Slider" />
+      <span id="tax-display" class="tax-percent">30%</span>
     </div>
+
+    <p class="summary">Profit After Tax: <span id="profit-after-tax">$0.00</span></p>
+  </section>
+
+  <section class="card">
+    <h2>Summary</h2>
+    <p>Total Sales: <span id="total-sales">$0.00</span></p>
+    <p>Total Expenses: <span id="total-expenses">$0.00</span></p>
   </section>
 </div>
 
 <script>
 (() => {
-  // Elements
-  const login = document.getElementById('login');
-  const dashboard = document.getElementById('dashboard');
-  const usernameInput = document.getElementById('username');
-  const passwordInput = document.getElementById('password');
+  // STORAGE KEYS
+  const SALES_KEY = 'dashboard_sales';
+  const EMPLOYEES_KEY = 'dashboard_employees';
+  const EXPENSES_KEY = 'dashboard_expenses';
+  const TAX_KEY = 'dashboard_tax';
+  const THEME_KEY = 'dashboard_theme';
 
-  // Tabs
-  const tabs = Array.from(dashboard.querySelectorAll('.tab'));
+  // Elements references
+  const tabs = [...document.querySelectorAll('.tab')];
   const panels = {
-    sales: document.getElementById('sales-tab'),
-    employees: document.getElementById('employees-tab'),
-    payroll: document.getElementById('payroll-tab'),
-    expenses: document.getElementById('expenses-tab'),
-    profit: document.getElementById('profit-tab'),
+    sales: document.getElementById('panel-sales'),
+    employees: document.getElementById('panel-employees'),
+    expenses: document.getElementById('panel-expenses'),
+    payroll: document.getElementById('panel-payroll')
   };
 
-  // Sales
+  // Forms & Tables
   const salesForm = document.getElementById('sales-form');
   const saleMonthInput = document.getElementById('sale-month');
   const saleAmountInput = document.getElementById('sale-amount');
-  const salesTableBody = document.getElementById('sales-table-body');
+  const salesTableBody = document.getElementById('sales-tbody');
 
-  // Employees
   const employeesForm = document.getElementById('employees-form');
   const employeeNameInput = document.getElementById('employee-name');
-  const employeeHireDateInput = document.getElementById('employee-hire-date');
+  const employeeHireDateInput = document.getElementById('employee-hiredate');
   const employeeGenderInput = document.getElementById('employee-gender');
   const employeeLogsInput = document.getElementById('employee-logs');
-  const employeesTableBody = document.getElementById('employees-table-body');
+  const employeesTableBody = document.getElementById('employees-tbody');
 
-  // Payroll
-  const payrollTableBody = document.getElementById('payroll-table-body');
-  const payrollTotalDisplay = document.getElementById('payroll-total-display');
-
-  // Expenses
   const expensesForm = document.getElementById('expenses-form');
   const expenseMonthInput = document.getElementById('expense-month');
   const expenseAmountInput = document.getElementById('expense-amount');
-  const expensesTableBody = document.getElementById('expenses-table-body');
+  const expensesTableBody = document.getElementById('expenses-tbody');
 
-  // Profit
-  const taxInput = document.getElementById('tax');
+  const payrollTableBody = document.getElementById('payroll-tbody');
+  const payrollTotalDisplay = document.getElementById('payroll-total');
+
+  const taxInput = document.getElementById('tax-input');
   const taxDisplay = document.getElementById('tax-display');
-  const totalSalesDisplay = document.getElementById('total-sales-display');
-  const totalPayrollDisplay = document.getElementById('total-payroll-display');
-  const totalExpensesDisplay = document.getElementById('total-expenses-display');
-  const profitAfterTaxDisplay = document.getElementById('profit-after-tax-display');
 
-  // Storage keys
-  const SALES_KEY = 'dashboard-sales';
-  const EMPLOYEES_KEY = 'dashboard-employees';
-  const EXPENSES_KEY = 'dashboard-expenses';
-  const TAX_KEY = 'dashboard-tax';
+  const totalSalesDisplay = document.getElementById('total-sales');
+  const totalExpensesDisplay = document.getElementById('total-expenses');
+  const profitAfterTaxDisplay = document.getElementById('profit-after-tax');
 
-  // Data stores
+  // Theme inputs
+  const themeInputs = [...document.querySelectorAll('.theme-selector input[name="theme"]')];
+
+  // Data arrays
   let sales = [];
   let employees = [];
   let expenses = [];
   let taxPercent = 30;
 
-  // Utility
+  // Utility: format currency
   function formatCurrency(num) {
-    return num.toLocaleString(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 2 });
+    return num.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
   }
 
-  // LocalStorage helpers
-  function saveToStorage(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
-  }
-  function loadFromStorage(key) {
-    const val = localStorage.getItem(key);
-    if (!val) return [];
-    try {
-      return JSON.parse(val);
-    } catch {
-      return [];
+  // Load data from localStorage
+  function loadData() {
+    const salesData = localStorage.getItem(SALES_KEY);
+    sales = salesData ? JSON.parse(salesData) : [];
+
+    const employeesData = localStorage.getItem(EMPLOYEES_KEY);
+    employees = employeesData ? JSON.parse(employeesData) : [];
+
+    const expensesData = localStorage.getItem(EXPENSES_KEY);
+    expenses = expensesData ? JSON.parse(expensesData) : [];
+
+    const taxData = localStorage.getItem(TAX_KEY);
+    taxPercent = taxData ? parseInt(taxData, 10) : 30;
+
+    const themeData = localStorage.getItem(THEME_KEY);
+    if (themeData) {
+      applyTheme(themeData);
+      // Reflect selection in radio buttons
+      const themeRadio = document.querySelector(`.theme-selector input[value="${themeData}"]`);
+      if (themeRadio) themeRadio.checked = true;
     }
   }
 
-  // Login logic
-  login.querySelector('form').addEventListener('submit', e => {
-    e.preventDefault();
-    const user = usernameInput.value.trim();
-    const pass = passwordInput.value;
-    if (user === 'admin' && pass === "Al'sOwners123") {
-      login.hidden = true;
-      dashboard.hidden = false;
-      initDashboard();
-      tabs[0].focus();
-    } else {
-      alert('Incorrect username or password.');
-    }
-  });
-
-  // Tabs
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      activateTab(tab.id.replace('-btn',''));
-    });
-    tab.addEventListener('keydown', e => {
-      let idx = tabs.indexOf(e.target);
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        const next = tabs[(idx + 1) % tabs.length];
-        next.focus();
-        activateTab(next.id.replace('-btn',''));
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        const prev = tabs[(idx - 1 + tabs.length) % tabs.length];
-        prev.focus();
-        activateTab(prev.id.replace('-btn',''));
-      }
-    });
-  });
-
-  function activateTab(name) {
-    tabs.forEach(t => {
-      const selected = t.id === name + '-btn';
-      t.setAttribute('aria-selected', selected);
-      t.tabIndex = selected ? 0 : -1;
-      panels[name].hidden = !selected;
-    });
-    updatePayroll(); // update payroll whenever tabs switch (to keep fresh)
-    updateProfit();
+  // Save data to localStorage
+  function saveData() {
+    localStorage.setItem(SALES_KEY, JSON.stringify(sales));
+    localStorage.setItem(EMPLOYEES_KEY, JSON.stringify(employees));
+    localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses));
+    localStorage.setItem(TAX_KEY, taxPercent.toString());
   }
 
-  // SALES
+  // Render sales table
   function renderSales() {
     salesTableBody.innerHTML = '';
-    sales.forEach(({month, amount}, i) => {
+    sales.forEach(({month, amount}, index) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${month}</td>
         <td>${formatCurrency(amount)}</td>
-        <td><button class="delete-btn" aria-label="Delete sale for ${month}">${'🗑️'}</button></td>
+        <td><button class="delete-btn" aria-label="Delete sale for ${month}" data-index="${index}">&times;</button></td>
       `;
-      tr.querySelector('button').addEventListener('click', () => {
-        sales.splice(i,1);
-        saveToStorage(SALES_KEY, sales);
-        renderSales();
-        updateProfit();
-      });
       salesTableBody.appendChild(tr);
     });
   }
-  salesForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const month = saleMonthInput.value;
-    const amount = parseFloat(saleAmountInput.value);
-    if (!month || isNaN(amount) || amount < 0) {
-      alert('Please enter valid sales data.');
-      return;
-    }
-    sales.push({month, amount});
-    sales.sort((a,b) => a.month.localeCompare(b.month));
-    saveToStorage(SALES_KEY, sales);
-    renderSales();
-    saleMonthInput.value = '';
-    saleAmountInput.value = '';
-    updateProfit();
-  });
 
-  // EMPLOYEES
+  // Render employees table
   function renderEmployees() {
     employeesTableBody.innerHTML = '';
-    employees.forEach(({name, hireDate, gender, logs}, i) => {
+    employees.forEach(({name, hireDate, gender, workLogs}, index) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${name}</td>
         <td>${hireDate}</td>
         <td>${gender}</td>
-        <td>${logs}</td>
-        <td><button class="delete-btn" aria-label="Delete employee ${name}">${'🗑️'}</button></td>
+        <td>${workLogs}</td>
+        <td><button class="delete-btn" aria-label="Delete employee ${name}" data-index="${index}">&times;</button></td>
       `;
-      tr.querySelector('button').addEventListener('click', () => {
-        employees.splice(i,1);
-        saveToStorage(EMPLOYEES_KEY, employees);
-        renderEmployees();
-        updatePayroll();
-        updateProfit();
-      });
       employeesTableBody.appendChild(tr);
     });
   }
-  employeesForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const name = employeeNameInput.value.trim();
-    const hireDate = employeeHireDateInput.value;
-    const gender = employeeGenderInput.value;
-    const logs = parseInt(employeeLogsInput.value);
-    if (!name || !hireDate || !gender || isNaN(logs) || logs < 0) {
-      alert('Please enter valid employee data.');
-      return;
-    }
-    employees.push({name, hireDate, gender, logs});
-    employees.sort((a,b) => a.name.localeCompare(b.name));
-    saveToStorage(EMPLOYEES_KEY, employees);
-    renderEmployees();
-    employeeNameInput.value = '';
-    employeeHireDateInput.value = '';
-    employeeGenderInput.value = '';
-    employeeLogsInput.value = '';
-    updatePayroll();
-    updateProfit();
-  });
 
-  // PAYROLL
-  function updatePayroll() {
+  // Render expenses table
+  function renderExpenses() {
+    expensesTableBody.innerHTML = '';
+    expenses.forEach(({month, amount}, index) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${month}</td>
+        <td>${formatCurrency(amount)}</td>
+        <td><button class="delete-btn" aria-label="Delete expense for ${month}" data-index="${index}">&times;</button></td>
+      `;
+      expensesTableBody.appendChild(tr);
+    });
+  }
+
+  // Calculate and render payroll
+  function renderPayroll() {
     payrollTableBody.innerHTML = '';
+
+    // Constant pay per work log
+    const payPerLog = 50;
+
     let totalPayroll = 0;
-    employees.forEach(({name, logs}) => {
-      const payPerLog = 10;
-      const totalPay = logs * payPerLog;
+
+    employees.forEach(({name, workLogs}) => {
+      const totalPay = workLogs * payPerLog;
       totalPayroll += totalPay;
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${name}</td>
-        <td>${logs}</td>
+        <td>${workLogs}</td>
         <td>${formatCurrency(payPerLog)}</td>
         <td>${formatCurrency(totalPay)}</td>
       `;
       payrollTableBody.appendChild(tr);
     });
+
     payrollTotalDisplay.textContent = formatCurrency(totalPayroll);
+
+    // Calculate profit after tax
+    const totalSales = sales.reduce((acc, cur) => acc + cur.amount, 0);
+    const totalExpenses = expenses.reduce((acc, cur) => acc + cur.amount, 0);
+
+    totalSalesDisplay.textContent = formatCurrency(totalSales);
+    totalExpensesDisplay.textContent = formatCurrency(totalExpenses);
+
+    const profitBeforeTax = totalSales - totalExpenses - totalPayroll;
+    const taxAmount = profitBeforeTax * (taxPercent / 100);
+    const profitAfterTax = profitBeforeTax - taxAmount;
+
+    profitAfterTaxDisplay.textContent = formatCurrency(profitAfterTax >= 0 ? profitAfterTax : 0);
   }
 
-  // EXPENSES
-  function renderExpenses() {
-    expensesTableBody.innerHTML = '';
-    expenses.forEach(({month, amount}, i) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${month}</td>
-        <td>${formatCurrency(amount)}</td>
-        <td><button class="delete-btn" aria-label="Delete expense for ${month}">${'🗑️'}</button></td>
-      `;
-      tr.querySelector('button').addEventListener('click', () => {
-        expenses.splice(i,1);
-        saveToStorage(EXPENSES_KEY, expenses);
+  // Add event handlers for delete buttons (delegation)
+  function setupDeleteHandlers() {
+    salesTableBody.onclick = (e) => {
+      if(e.target.classList.contains('delete-btn')) {
+        const idx = +e.target.dataset.index;
+        sales.splice(idx, 1);
+        saveData();
+        renderSales();
+        renderPayroll();
+      }
+    };
+
+    employeesTableBody.onclick = (e) => {
+      if(e.target.classList.contains('delete-btn')) {
+        const idx = +e.target.dataset.index;
+        employees.splice(idx, 1);
+        saveData();
+        renderEmployees();
+        renderPayroll();
+      }
+    };
+
+    expensesTableBody.onclick = (e) => {
+      if(e.target.classList.contains('delete-btn')) {
+        const idx = +e.target.dataset.index;
+        expenses.splice(idx, 1);
+        saveData();
         renderExpenses();
-        updateProfit();
-      });
-      expensesTableBody.appendChild(tr);
+        renderPayroll();
+      }
+    };
+  }
+
+  // Tab switching
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      switchTab(tab.id.replace('tab-', ''));
+    });
+    tab.addEventListener('keydown', e => {
+      const currentIndex = tabs.indexOf(document.activeElement);
+      if (e.key === 'ArrowRight') {
+        const nextIndex = (currentIndex + 1) % tabs.length;
+        tabs[nextIndex].focus();
+      }
+      if (e.key === 'ArrowLeft') {
+        const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        tabs[prevIndex].focus();
+      }
+    });
+  });
+
+  function switchTab(selected) {
+    tabs.forEach(tab => {
+      const isSelected = tab.id === 'tab-' + selected;
+      tab.setAttribute('aria-selected', isSelected);
+      tab.tabIndex = isSelected ? 0 : -1;
+      panels[tab.id.replace('tab-', '')].hidden = !isSelected;
     });
   }
+
+  // Add sale
+  salesForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const month = saleMonthInput.value;
+    const amount = parseFloat(saleAmountInput.value);
+    if(!month || isNaN(amount) || amount < 0) return;
+
+    sales.push({month, amount});
+    sales.sort((a,b) => a.month.localeCompare(b.month));
+    saveData();
+    renderSales();
+    renderPayroll();
+    salesForm.reset();
+  });
+
+  // Add employee
+  employeesForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = employeeNameInput.value.trim();
+    const hireDate = employeeHireDateInput.value;
+    const gender = employeeGenderInput.value;
+    const workLogs = parseInt(employeeLogsInput.value, 10);
+    if(!name || !hireDate || !gender || isNaN(workLogs) || workLogs < 0) return;
+
+    employees.push({name, hireDate, gender, workLogs});
+    employees.sort((a,b) => a.name.localeCompare(b.name));
+    saveData();
+    renderEmployees();
+    renderPayroll();
+    employeesForm.reset();
+  });
+
+  // Add expense
   expensesForm.addEventListener('submit', e => {
     e.preventDefault();
     const month = expenseMonthInput.value;
     const amount = parseFloat(expenseAmountInput.value);
-    if (!month || isNaN(amount) || amount < 0) {
-      alert('Please enter valid expense data.');
-      return;
-    }
+    if(!month || isNaN(amount) || amount < 0) return;
+
     expenses.push({month, amount});
     expenses.sort((a,b) => a.month.localeCompare(b.month));
-    saveToStorage(EXPENSES_KEY, expenses);
+    saveData();
     renderExpenses();
-    expenseMonthInput.value = '';
-    expenseAmountInput.value = '';
-    updateProfit();
+    renderPayroll();
+    expensesForm.reset();
   });
 
-  // PROFIT
-  function updateProfit() {
-    const totalSales = sales.reduce((acc, s) => acc + s.amount, 0);
-    const totalPayroll = employees.reduce((acc, e) => acc + e.logs * 10, 0);
-    const totalExpenses = expenses.reduce((acc, e) => acc + e.amount, 0);
-    const taxRate = taxPercent / 100;
-    const profitBeforeTax = totalSales - totalPayroll - totalExpenses;
-    const profitAfterTax = profitBeforeTax * (1 - taxRate);
+  // Tax slider change
+  taxInput.addEventListener('input', () => {
+    taxPercent = +taxInput.value;
+    taxDisplay.textContent = taxPercent + '%';
+    taxInput.setAttribute('aria-valuenow', taxPercent);
+    saveData();
+    renderPayroll();
+  });
 
-    totalSalesDisplay.textContent = formatCurrency(totalSales);
-    totalPayrollDisplay.textContent = formatCurrency(totalPayroll);
-    totalExpensesDisplay.textContent = formatCurrency(totalExpenses);
-    profitAfterTaxDisplay.textContent = formatCurrency(profitAfterTax);
+  // Theme selector
+  themeInputs.forEach(input => {
+    input.addEventListener('change', e => {
+      applyTheme(e.target.value);
+      localStorage.setItem(THEME_KEY, e.target.value);
+    });
+  });
+
+  function applyTheme(themeName) {
+    document.body.classList.remove('dark-theme', 'warm-theme');
+    if(themeName === 'dark') document.body.classList.add('dark-theme');
+    else if(themeName === 'warm') document.body.classList.add('warm-theme');
+    // else light, no class needed
   }
 
-  // Tax input
-  taxInput.addEventListener('input', e => {
-    let val = parseInt(e.target.value);
-    if (isNaN(val) || val < 0) val = 0;
-    else if (val > 100) val = 100;
-    taxPercent = val;
-    e.target.value = val;
-    taxDisplay.textContent = val + '%';
-    localStorage.setItem(TAX_KEY, val);
-    updateProfit();
-  });
-
-  // Initialize dashboard
-  function initDashboard() {
-    // Load saved data
-    sales = loadFromStorage(SALES_KEY);
-    employees = loadFromStorage(EMPLOYEES_KEY);
-    expenses = loadFromStorage(EXPENSES_KEY);
-    taxPercent = parseInt(localStorage.getItem(TAX_KEY)) || 30;
-    taxInput.value = taxPercent;
-    taxDisplay.textContent = taxPercent + '%';
-
-    // Render data
+  // Initial load
+  function init() {
+    loadData();
     renderSales();
     renderEmployees();
     renderExpenses();
-    updatePayroll();
-    updateProfit();
+    renderPayroll();
+    setupDeleteHandlers();
 
-    activateTab('sales');
+    taxInput.value = taxPercent;
+    taxDisplay.textContent = taxPercent + '%';
   }
+
+  init();
 
 })();
 </script>
-
 </body>
 </html>
