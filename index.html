@@ -2,379 +2,145 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AL's Business Management Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profit Calculator</title>
   <style>
-    /* Reset & base */
-    *, *::before, *::after {
+    * {
       box-sizing: border-box;
     }
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f9fafb;
-      color: #333;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
     }
-
-    /* Top Navigation */
-    nav {
-      background-color: #1e293b; /* dark slate blue */
-      color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+    header, nav, main {
+      padding: 20px;
     }
-    nav h1 {
-      margin: 0;
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 1.5rem;
-      margin: 0;
-      padding: 0;
-    }
-    nav ul li {
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 0.3rem 0.5rem;
-      border-radius: 4px;
-      transition: background-color 0.25s ease;
-    }
-    nav ul li:hover,
-    nav ul li.active {
-      background-color: #3b82f6; /* blue-500 */
-      color: white;
-    }
-
-    /* Main content area */
-    main {
-      flex: 1;
-      padding: 2rem 3rem;
-      max-width: 1100px;
-      margin: 0 auto 3rem auto;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
-    }
-
-    /* Forms */
-    form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.25rem 2rem;
-      margin-bottom: 2rem;
-      align-items: center;
-    }
-    form label {
-      flex: 1 0 140px;
-      font-weight: 600;
-      color: #475569;
-      user-select: none;
-    }
-    form input[type="text"],
-    form input[type="number"],
-    form input[type="date"],
-    form select {
-      flex: 2 1 250px;
-      padding: 0.5rem 0.75rem;
-      font-size: 1rem;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 6px;
-      transition: border-color 0.2s ease;
-    }
-    form input[type="text"]:focus,
-    form input[type="number"]:focus,
-    form input[type="date"]:focus,
-    form select:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 6px rgba(59, 130, 246, 0.5);
-    }
-    form button {
-      padding: 0.6rem 1.25rem;
-      background-color: #3b82f6;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.25s ease;
-      flex-shrink: 0;
-    }
-    form button:hover {
-      background-color: #2563eb;
-    }
-    form .secondary-btn {
-      background-color: #e2e8f0;
-      color: #475569;
-      font-weight: 600;
-    }
-    form .secondary-btn:hover {
-      background-color: #cbd5e1;
-    }
-
-    /* Tables */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.95rem;
-      box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    thead {
-      background-color: #3b82f6;
-      color: white;
-      user-select: none;
-    }
-    thead th {
-      padding: 0.75rem 1rem;
-      text-align: left;
-      font-weight: 600;
-    }
-    tbody tr {
-      border-bottom: 1px solid #e2e8f0;
-      transition: background-color 0.15s ease;
-      cursor: default;
-    }
-    tbody tr:hover {
-      background-color: #f0f9ff;
-    }
-    tbody td {
-      padding: 0.65rem 1rem;
-      color: #334155;
-    }
-
-    /* Centered login container */
     #loginPage {
       display: flex;
       height: 100vh;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      background-color: #333;
     }
-    #loginPage > div {
-      background-color: white;
-      padding: 2rem 2.5rem;
-      border-radius: 10px;
-      width: 320px;
-      box-shadow: 0 6px 15px rgb(0 0 0 / 0.15);
-    }
-    #loginPage h2 {
-      text-align: center;
-      margin-bottom: 1.75rem;
-      color: #1e293b;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-    }
-    #loginPage label {
-      font-weight: 600;
-      color: #475569;
+    #loginPage form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
     #loginPage input[type="text"],
     #loginPage input[type="password"] {
       width: 100%;
-      padding: 0.5rem 0.75rem;
-      margin: 0.5rem 0 1.5rem 0;
-      font-size: 1rem;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 6px;
-      transition: border-color 0.2s ease;
+      padding: 10px;
+      margin: 10px 0;
     }
-    #loginPage input[type="text"]:focus,
-    #loginPage input[type="password"]:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 6px rgba(59, 130, 246, 0.5);
+    nav {
+      display: none;
+      background-color: #222;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    #loginPage button {
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+    }
+    nav ul li {
+      cursor: pointer;
+      padding: 8px 12px;
+    }
+    nav ul li.active, nav ul li:hover {
+      background-color: #444;
+      border-radius: 4px;
+    }
+    main {
+      display: none;
+    }
+    section.page {
+      display: none;
+    }
+    section.page.active {
+      display: block;
+    }
+    table {
       width: 100%;
-      padding: 0.6rem;
-      font-weight: 700;
-      font-size: 1.1rem;
-      background-color: #3b82f6;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    input[type="number"], input[type="text"] {
+      padding: 6px;
+      margin: 5px 0;
+    }
+    button {
+      padding: 8px 16px;
+      background: #007bff;
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 4px;
       cursor: pointer;
-      transition: background-color 0.25s ease;
     }
-    #loginPage button:hover {
-      background-color: #2563eb;
-    }
-
-    /* Profit results */
-    #profitResults {
-      font-weight: 600;
-      font-size: 1.05rem;
-      line-height: 1.4;
-      color: #1e293b;
-      margin-top: 1rem;
-      padding: 1rem;
-      background-color: #f1f5f9;
-      border-radius: 6px;
-      border: 1px solid #cbd5e1;
-      max-width: 420px;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 720px) {
-      main {
-        padding: 1.5rem 1rem;
-        margin: 0 1rem 2rem;
-      }
-      form {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      form label, form input, form select, form button {
-        flex: none;
-        width: 100%;
-      }
-      nav ul {
-        gap: 1rem;
-      }
+    button:hover {
+      background: #0056b3;
     }
   </style>
 </head>
 <body>
-
-  <!-- Login Page -->
-  <section id="loginPage">
-    <div>
+  <div id="loginPage">
+    <form id="loginForm">
       <h2>Login</h2>
-      <form id="loginForm">
-        <label for="username">Username</label>
-        <input type="text" id="username" required autocomplete="username" />
-        <label for="password">Password</label>
-        <input type="password" id="password" required autocomplete="current-password" />
-        <button type="submit">Sign In</button>
-      </form>
-    </div>
-  </section>
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+  </div>
 
-  <!-- Main App -->
-  <nav id="navBar" style="display:none;">
-    <h1>Business Dashboard</h1>
+  <nav id="navBar">
     <ul>
-      <li class="active" data-page="salesPage">Sales</li>
-      <li data-page="employeesPage">Employees</li>
-      <li data-page="payrollPage">Payroll</li>
-      <li data-page="expensesPage">Expenses</li>
-      <li data-page="profitPage">Profit</li>
-      <li id="logoutBtn" style="margin-left: auto; cursor:pointer; font-weight: 600; color:#f87171;">Logout</li>
+      <li data-page="dashboard" class="active">Dashboard</li>
+      <li data-page="payroll">Payroll</li>
     </ul>
+    <button id="logoutBtn">Logout</button>
   </nav>
 
-  <main style="display:none;" id="mainContent">
-
-    <!-- Sales Page -->
-    <section id="salesPage" class="page">
-      <h2>Sales</h2>
-      <form id="salesForm">
-        <label for="salesAmount">Sale Amount ($)</label>
-        <input type="number" id="salesAmount" min="0" step="0.01" required />
-        <label for="salesDate">Date</label>
-        <input type="date" id="salesDate" required />
-        <button type="submit">Add Sale</button>
-      </form>
-      <table id="salesTable">
-        <thead>
-          <tr><th>Date</th><th>Amount ($)</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <button id="clearSales" class="secondary-btn" style="margin-top: 1rem;">Clear Sales Data</button>
+  <main id="mainContent">
+    <section id="dashboard" class="page active">
+      <h2>Dashboard</h2>
+      <p>Welcome to the profit calculator dashboard.</p>
     </section>
 
-    <!-- Employees Page -->
-    <section id="employeesPage" class="page" style="display:none;">
-      <h2>Employees</h2>
-      <form id="employeesForm">
-        <label for="employeeName">Employee Name</label>
-        <input type="text" id="employeeName" required />
-        <button type="submit">Add Employee</button>
-      </form>
-      <table id="employeesTable">
-        <thead>
-          <tr><th>Name</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <button id="clearEmployees" class="secondary-btn" style="margin-top: 1rem;">Clear Employees Data</button>
-    </section>
-
-    <!-- Payroll Page -->
-    <section id="payrollPage" class="page" style="display:none;">
-      <h2>Payroll</h2>
+    <section id="payroll" class="page">
+      <h2>Payroll Calculator</h2>
       <form id="payrollForm">
-        <label for="employeeSelect">Employee</label>
-        <select id="employeeSelect" required>
-          <option value="">Select Employee</option>
-        </select>
-        <label for="logsCount">Number of Logs</label>
-        <input type="number" id="logsCount" min="0" required />
-        <label for="payrollMonth">Month</label>
-        <input type="month" id="payrollMonth" required />
-        <button type="submit">Add Payroll Entry</button>
+        <input type="text" id="workerName" placeholder="Worker Name" required />
+        <input type="number" id="logCount" placeholder="Number of Logs" required />
+        <button type="submit">Add Entry</button>
       </form>
-      <table id="payrollTable">
+      <table>
         <thead>
-          <tr><th>Employee</th><th>Logs</th><th>Amount ($)</th><th>Month</th></tr>
+          <tr>
+            <th>Worker</th>
+            <th>Logs</th>
+            <th>Pay ($)</th>
+          </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="payrollTableBody"></tbody>
       </table>
-      <button id="clearPayroll" class="secondary-btn" style="margin-top: 1rem;">Clear Payroll Data</button>
+      <h3>Total Payroll: $<span id="totalPayroll">0.00</span></h3>
+      <h3>Estimated Profit (Sales - Payroll): $<span id="netProfit">0.00</span></h3>
     </section>
-
-    <!-- Expenses Page -->
-    <section id="expensesPage" class="page" style="display:none;">
-      <h2>Expenses</h2>
-      <form id="expensesForm">
-        <label for="expenseAmount">Expense Amount ($)</label>
-        <input type="number" id="expenseAmount" min="0" step="0.01" required />
-        <label for="expenseDate">Date</label>
-        <input type="date" id="expenseDate" required />
-        <button type="submit">Add Expense</button>
-      </form>
-      <table id="expensesTable">
-        <thead>
-          <tr><th>Date</th><th>Amount ($)</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <button id="clearExpenses" class="secondary-btn" style="margin-top: 1rem;">Clear Expenses Data</button>
-    </section>
-
-    <!-- Profit Page -->
-    <section id="profitPage" class="page" style="display:none;">
-      <h2>Profit Calculator</h2>
-      <form id="taxForm">
-        <label for="taxPercent">Tax Percentage (%)</label>
-        <input type="number" id="taxPercent" min="0" max="100" step="0.01" required />
-        <button type="submit">Calculate Profit</button>
-      </form>
-      <div id="profitResults" aria-live="polite"></div>
-    </section>
-
   </main>
 
   <script>
-    // --- LOGIN HANDLING ---
     const loginPage = document.getElementById('loginPage');
     const navBar = document.getElementById('navBar');
     const mainContent = document.getElementById('mainContent');
@@ -388,23 +154,21 @@
       e.preventDefault();
       const username = loginForm.username.value.trim();
       const password = loginForm.password.value.trim();
-      if(username === USERNAME && password === PASSWORD) {
+      if (username === USERNAME && password === PASSWORD) {
         loginPage.style.display = 'none';
         navBar.style.display = 'flex';
         mainContent.style.display = 'block';
-        loadAllData();
       } else {
         alert('Invalid username or password.');
       }
     });
 
     logoutBtn.addEventListener('click', () => {
-      if(confirm('Logout? All unsaved data will be preserved.')) {
+      if (confirm('Logout?')) {
         location.reload();
       }
     });
 
-    // --- NAVIGATION ---
     const navItems = navBar.querySelectorAll('ul li[data-page]');
     const pages = mainContent.querySelectorAll('section.page');
 
@@ -414,232 +178,51 @@
         item.classList.add('active');
         const targetPage = item.dataset.page;
         pages.forEach(page => {
-          page.style.display = page.id === targetPage ? 'block' : 'none';
+          page.classList.remove('active');
+          if (page.id === targetPage) page.classList.add('active');
         });
       });
     });
 
-    // --- UTILITIES ---
-    function formatNumber(num) {
-      return num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-    }
-
-    // --- SALES PAGE ---
-    const salesForm = document.getElementById('salesForm');
-    const salesTableBody = document.querySelector('#salesTable tbody');
-    let salesData = [];
-
-    function saveSales() {
-      localStorage.setItem('salesData', JSON.stringify(salesData));
-    }
-    function loadSales() {
-      const data = localStorage.getItem('salesData');
-      salesData = data ? JSON.parse(data) : [];
-    }
-    function renderSalesTable() {
-      salesTableBody.innerHTML = '';
-      salesData.forEach(sale => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${sale.date}</td><td>$${formatNumber(sale.amount)}</td>`;
-        salesTableBody.appendChild(tr);
-      });
-    }
-    salesForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const amount = parseFloat(salesForm.salesAmount.value);
-      const date = salesForm.salesDate.value;
-      if(isNaN(amount) || amount < 0) return alert('Enter a valid sale amount.');
-      if(!date) return alert('Select a date.');
-      salesData.push({amount, date});
-      saveSales();
-      renderSalesTable();
-      salesForm.reset();
-    });
-    document.getElementById('clearSales').addEventListener('click', () => {
-      if(confirm('Clear all sales data?')) {
-        salesData = [];
-        saveSales();
-        renderSalesTable();
-      }
-    });
-
-    // --- EMPLOYEES PAGE ---
-    const employeesForm = document.getElementById('employeesForm');
-    const employeesTableBody = document.querySelector('#employeesTable tbody');
-    let employeesData = [];
-
-    function saveEmployees() {
-      localStorage.setItem('employeesData', JSON.stringify(employeesData));
-    }
-    function loadEmployees() {
-      const data = localStorage.getItem('employeesData');
-      employeesData = data ? JSON.parse(data) : [];
-    }
-    function renderEmployeesTable() {
-      employeesTableBody.innerHTML = '';
-      employeesData.forEach(emp => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${emp.name}</td>`;
-        employeesTableBody.appendChild(tr);
-      });
-    }
-    employeesForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const name = employeesForm.employeeName.value.trim();
-      if(!name) return alert('Enter an employee name.');
-      employeesData.push({name});
-      saveEmployees();
-      renderEmployeesTable();
-      populateEmployeeSelect();
-      employeesForm.reset();
-    });
-    document.getElementById('clearEmployees').addEventListener('click', () => {
-      if(confirm('Clear all employee data?')) {
-        employeesData = [];
-        saveEmployees();
-        renderEmployeesTable();
-        populateEmployeeSelect();
-      }
-    });
-
-    // --- PAYROLL PAGE ---
     const payrollForm = document.getElementById('payrollForm');
-    const payrollTableBody = document.querySelector('#payrollTable tbody');
-    const employeeSelect = document.getElementById('employeeSelect');
-    let payrollData = [];
+    const payrollTableBody = document.getElementById('payrollTableBody');
+    const totalPayrollDisplay = document.getElementById('totalPayroll');
+    const netProfitDisplay = document.getElementById('netProfit');
 
-    function savePayroll() {
-      localStorage.setItem('payrollData', JSON.stringify(payrollData));
-    }
-    function loadPayroll() {
-      const data = localStorage.getItem('payrollData');
-      payrollData = data ? JSON.parse(data) : [];
-    }
-    function renderPayrollTable() {
-      payrollTableBody.innerHTML = '';
-      payrollData.forEach(entry => {
-        const amount = calculatePayrollAmount(entry, entry.logs);
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${entry.employee}</td><td>${entry.logs}</td><td>$${formatNumber(amount)}</td><td>${entry.month}</td>`;
-        payrollTableBody.appendChild(tr);
-      });
-    }
-    function populateEmployeeSelect() {
-      employeeSelect.innerHTML = '<option value="">Select Employee</option>';
-      employeesData.forEach(emp => {
-        const option = document.createElement('option');
-        option.value = emp.name;
-        option.textContent = emp.name;
-        employeeSelect.appendChild(option);
-      });
-    }
+    let payrollEntries = [];
+    const LOG_RATE = 1000; // $1000 per log
+    const ESTIMATED_SALES = 100000; // Replace with real value as needed
+
     payrollForm.addEventListener('submit', e => {
       e.preventDefault();
-      const employee = payrollForm.employeeSelect.value;
-      const logs = parseInt(payrollForm.logsCount.value, 10);
-      const month = payrollForm.payrollMonth.value;
-      if(!employee) return alert('Select an employee.');
-      if(isNaN(logs) || logs < 0) return alert('Enter a valid logs number.');
-      if(!month) return alert('Select a month.');
-      payrollData.push({employee, logs, month});
-      savePayroll();
-      renderPayrollTable();
+      const name = document.getElementById('workerName').value.trim();
+      const logs = parseInt(document.getElementById('logCount').value);
+      const pay = logs * LOG_RATE;
+
+      payrollEntries.push({ name, logs, pay });
+      updatePayrollTable();
+
       payrollForm.reset();
     });
-    document.getElementById('clearPayroll').addEventListener('click', () => {
-      if(confirm('Clear all payroll data?')) {
-        payrollData = [];
-        savePayroll();
-        renderPayrollTable();
-      }
-    });
-    function calculatePayrollAmount(employee, logs) {
-  const ratePerLog = employee.name === "John Delporte" ? 1200 : 1000;
-  return logs * ratePerLog;
-    }
 
-    // --- EXPENSES PAGE ---
-    const expensesForm = document.getElementById('expensesForm');
-    const expensesTableBody = document.querySelector('#expensesTable tbody');
-    let expensesData = [];
+    function updatePayrollTable() {
+      payrollTableBody.innerHTML = '';
+      let totalPayroll = 0;
 
-    function saveExpenses() {
-      localStorage.setItem('expensesData', JSON.stringify(expensesData));
-    }
-    function loadExpenses() {
-      const data = localStorage.getItem('expensesData');
-      expensesData = data ? JSON.parse(data) : [];
-    }
-    function renderExpensesTable() {
-      expensesTableBody.innerHTML = '';
-      expensesData.forEach(exp => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${exp.date}</td><td>$${formatNumber(exp.amount)}</td>`;
-        expensesTableBody.appendChild(tr);
+      payrollEntries.forEach(entry => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${entry.name}</td>
+          <td>${entry.logs}</td>
+          <td>$${entry.pay.toLocaleString()}</td>
+        `;
+        payrollTableBody.appendChild(row);
+        totalPayroll += entry.pay;
       });
-    }
-    expensesForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const amount = parseFloat(expensesForm.expenseAmount.value);
-      const date = expensesForm.expenseDate.value;
-      if(isNaN(amount) || amount < 0) return alert('Enter a valid expense amount.');
-      if(!date) return alert('Select a date.');
-      expensesData.push({amount, date});
-      saveExpenses();
-      renderExpensesTable();
-      expensesForm.reset();
-    });
-    document.getElementById('clearExpenses').addEventListener('click', () => {
-      if(confirm('Clear all expenses data?')) {
-        expensesData = [];
-        saveExpenses();
-        renderExpensesTable();
-      }
-    });
 
-    // --- PROFIT PAGE ---
-    const taxForm = document.getElementById('taxForm');
-    const profitResults = document.getElementById('profitResults');
-
-    taxForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const taxPercent = parseFloat(taxForm.taxPercent.value);
-      if(isNaN(taxPercent) || taxPercent < 0 || taxPercent > 100) return alert('Enter a valid tax percentage (0-100).');
-
-      const totalSales = salesData.reduce((sum, s) => sum + s.amount, 0);
-      const totalPayroll = payrollData.reduce((sum, p) => sum + calculatePayrollAmount(p.logs), 0);
-      const totalExpenses = expensesData.reduce((sum, e) => sum + e.amount, 0);
-
-      const profitBeforeTax = totalSales - totalPayroll - totalExpenses;
-      const taxAmount = (profitBeforeTax > 0) ? (profitBeforeTax * (taxPercent / 100)) : 0;
-      const profitAfterTax = profitBeforeTax - taxAmount;
-
-      profitResults.innerHTML = `
-        <p>Total Sales: $${formatNumber(totalSales)}</p>
-        <p>Total Payroll: $${formatNumber(totalPayroll)}</p>
-        <p>Total Expenses: $${formatNumber(totalExpenses)}</p>
-        <p><strong>Profit Before Tax: $${formatNumber(profitBeforeTax)}</strong></p>
-        <p>Tax Amount (${taxPercent}%): $${formatNumber(taxAmount)}</p>
-        <p><strong>Profit After Tax: $${formatNumber(profitAfterTax)}</strong></p>
-      `;
-    });
-
-    // --- LOAD ALL DATA ---
-    function loadAllData() {
-      loadSales();
-      renderSalesTable();
-
-      loadEmployees();
-      renderEmployeesTable();
-      populateEmployeeSelect();
-
-      loadPayroll();
-      renderPayrollTable();
-
-      loadExpenses();
-      renderExpensesTable();
-
-      profitResults.innerHTML = '';
+      totalPayrollDisplay.textContent = totalPayroll.toLocaleString(undefined, { minimumFractionDigits: 2 });
+      const profit = ESTIMATED_SALES - totalPayroll;
+      netProfitDisplay.textContent = profit.toLocaleString(undefined, { minimumFractionDigits: 2 });
     }
   </script>
 </body>
