@@ -5,234 +5,310 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Business Dashboard</title>
 <style>
+  /* --- Global styles --- */
   body {
-    font-family: Arial, sans-serif;
-    margin: 0; padding: 0;
-    background: #f5f7fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f7f9;
+    margin: 0;
+    padding: 0;
+    color: #34495e;
   }
-  /* Center login */
+  h1, h2 {
+    text-align: center;
+    color: #2c3e50;
+  }
+  button, input, select {
+    font-family: inherit;
+    font-size: 1rem;
+  }
+  /* --- Login styles --- */
   #login-container {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #2c3e50;
-  }
-  #login-form {
+    max-width: 360px;
+    margin: 120px auto;
     background: white;
-    padding: 30px 40px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.3);
-    width: 320px;
+    padding: 30px 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.15);
   }
-  #login-form input {
+  #login-container h1 {
+    margin-bottom: 20px;
+    color: #27ae60;
+  }
+  #login-container label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  #login-container input[type="text"],
+  #login-container input[type="password"] {
     width: 100%;
     padding: 10px 12px;
-    margin-bottom: 15px;
-    font-size: 16px;
+    margin-bottom: 18px;
+    border-radius: 5px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    box-sizing: border-box;
   }
-  #login-form button {
+  #login-container button {
     width: 100%;
-    padding: 12px;
     background: #27ae60;
     border: none;
     color: white;
-    font-weight: bold;
-    font-size: 16px;
-    border-radius: 4px;
+    font-weight: 700;
+    padding: 12px 0;
+    border-radius: 5px;
     cursor: pointer;
+    transition: background 0.3s ease;
   }
-  #login-form button:hover {
+  #login-container button:hover {
     background: #219150;
   }
 
-  /* Dashboard container hidden initially */
+  /* --- Dashboard styles --- */
   #dashboard {
     display: none;
-    padding: 20px;
+    max-width: 1100px;
+    margin: 20px auto 50px;
+    padding: 0 20px;
   }
 
-  /* Tabs style */
-  .tabs {
+  /* Tabs navigation */
+  #tabs {
     display: flex;
-    border-bottom: 2px solid #ddd;
-    margin-bottom: 15px;
-  }
-  .tab {
-    padding: 10px 20px;
-    cursor: pointer;
-    user-select: none;
-    border-bottom: 3px solid transparent;
-    transition: border-color 0.3s;
-    font-weight: bold;
-    color: #555;
-  }
-  .tab.active {
-    border-color: #27ae60;
-    color: #27ae60;
-  }
-
-  /* Content sections */
-  .tab-content {
-    display: none;
-  }
-  .tab-content.active {
-    display: block;
-  }
-
-  /* Tables */
-  table {
-    width: 100%;
-    border-collapse: collapse;
+    justify-content: center;
     margin-bottom: 20px;
+    gap: 12px;
+    flex-wrap: wrap;
   }
-  table th, table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  table th {
+  #tabs button {
     background: #27ae60;
     color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  #tabs button[aria-selected="true"] {
+    background: #145a32;
+  }
+  #tabs button:hover:not([aria-selected="true"]) {
+    background: #3fc37f;
   }
 
-  /* Forms */
+  /* Tab content */
+  .tab-content {
+    background: white;
+    border-radius: 10px;
+    padding: 20px 25px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.1);
+  }
+
+  /* --- Common form styles --- */
   form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    align-items: center;
     margin-bottom: 20px;
   }
   form input, form select {
-    padding: 6px 8px;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    padding: 8px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    flex: 1 1 140px;
+    min-width: 120px;
   }
   form button {
-    padding: 8px 15px;
+    flex: 0 0 auto;
     background: #27ae60;
-    border: none;
     color: white;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 5px;
+    font-weight: 700;
     cursor: pointer;
-    border-radius: 4px;
+    transition: background 0.3s ease;
   }
   form button:hover {
-    background: #219150;
-  }
-  .edit-btn, .delete-btn {
-    padding: 5px 8px;
-    margin-right: 5px;
-    cursor: pointer;
-    border: none;
-    border-radius: 3px;
-    font-size: 14px;
-  }
-  .edit-btn {
-    background: #2980b9;
-    color: white;
-  }
-  .edit-btn:hover {
-    background: #1c5980;
-  }
-  .delete-btn {
-    background: #c0392b;
-    color: white;
-  }
-  .delete-btn:hover {
-    background: #8a231d;
+    background: #1f8247;
   }
 
-  /* Profit summary */
-  .profit-summary div {
-    margin-bottom: 8px;
+  /* --- Tables --- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 12px;
+    text-align: left;
+  }
+  th {
+    background: #27ae60;
+    color: white;
+    font-weight: 700;
+  }
+  tr:hover {
+    background: #f1f9f1;
+  }
+  td .delete-btn {
+    background: #e74c3c;
+    border: none;
+    color: white;
+    padding: 4px 9px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  td .delete-btn:hover {
+    background: #c0392b;
+  }
+
+  /* --- Profit Tab Styles --- */
+  .profit-container {
+    max-width: 400px;
+    background: #e9f7ef;
+    border: 1px solid #27ae60;
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin: auto;
     font-size: 18px;
+    color: #2c3e50;
+  }
+  .profit-row {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .profit-row label {
+    font-weight: 600;
+    margin-right: 10px;
+  }
+  .profit-row input[type="number"] {
+    width: 80px;
+    padding: 5px 8px;
+    font-size: 16px;
+    border: 1px solid #27ae60;
+    border-radius: 4px;
+    color: #27ae60;
+  }
+  .profit-summary div {
+    margin-bottom: 10px;
+  }
+  .profit-summary .label {
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .net-profit {
+    font-size: 22px;
+    color: #27ae60;
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 600px) {
+    form {
+      flex-direction: column;
+      gap: 12px;
+    }
+    form input, form select {
+      width: 100%;
+      min-width: unset;
+    }
+    #tabs {
+      justify-content: center;
+    }
   }
 </style>
 </head>
 <body>
 
-<!-- LOGIN FORM -->
-<div id="login-container">
-  <form id="login-form" autocomplete="off" aria-label="Owner Login Form">
-    <h2 style="text-align:center; margin-bottom:20px;">Owner Login</h2>
-    <input type="text" id="username" placeholder="Username" required aria-label="Username" />
-    <input type="password" id="password" placeholder="Password" required aria-label="Password" />
-    <button type="submit">Login</button>
+<!-- LOGIN -->
+<div id="login-container" role="dialog" aria-labelledby="login-title" aria-modal="true">
+  <h1 id="login-title">Owner Login</h1>
+  <form id="login-form" autocomplete="off" aria-describedby="login-desc">
+    <label for="username">Username</label>
+    <input type="text" id="username" required autocomplete="username" aria-required="true" />
+    <label for="password">Password</label>
+    <input type="password" id="password" required autocomplete="current-password" aria-required="true" />
+    <button type="submit">Log In</button>
   </form>
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboard" aria-live="polite" aria-atomic="true">
+<div id="dashboard" role="main" aria-label="Business Dashboard">
 
   <!-- Tabs -->
-  <div class="tabs" role="tablist" aria-label="Dashboard Tabs">
-    <div class="tab active" role="tab" tabindex="0" aria-selected="true" data-tab="sales">Sales</div>
-    <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="employees">Employees</div>
-    <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="expenses">Expenses</div>
-    <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="payroll">Payroll</div>
-    <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="profit">Profit</div>
-  </div>
+  <nav id="tabs" role="tablist" aria-label="Dashboard Sections">
+    <button role="tab" id="tab-sales" aria-selected="true" aria-controls="sales" tabindex="0">Sales</button>
+    <button role="tab" id="tab-employees" aria-selected="false" aria-controls="employees" tabindex="-1">Employees</button>
+    <button role="tab" id="tab-payroll" aria-selected="false" aria-controls="payroll" tabindex="-1">Payroll</button>
+    <button role="tab" id="tab-expenses" aria-selected="false" aria-controls="expenses" tabindex="-1">Expenses</button>
+    <button role="tab" id="tab-profit" aria-selected="false" aria-controls="profit" tabindex="-1">Profit</button>
+  </nav>
 
   <!-- Sales Tab -->
-  <section id="sales" class="tab-content active" role="tabpanel" tabindex="0" aria-label="Sales tab content">
-    <form id="sales-form" aria-label="Add or edit sales record">
-      <input type="month" id="sales-month" required aria-required="true" />
-      <input type="number" id="sales-amount" min="0" step="0.01" placeholder="Amount" required aria-required="true" />
-      <button type="submit">Add/Update Sale</button>
+  <section id="sales" class="tab-content" role="tabpanel" tabindex="0" aria-labelledby="tab-sales">
+    <h2>Sales</h2>
+    <form id="sales-form" aria-label="Add new sale">
+      <input type="month" id="sale-month" required aria-required="true" />
+      <input type="number" id="sale-amount" min="0" step="0.01" placeholder="Amount" required aria-required="true" />
+      <button type="submit">Add Sale</button>
     </form>
-    <table aria-describedby="sales-table-desc">
-      <caption id="sales-table-desc">Sales records by month and amount</caption>
+    <table aria-label="Sales table">
       <thead>
-        <tr><th>Month</th><th>Amount ($)</th><th>Actions</th></tr>
+        <tr>
+          <th>Month</th>
+          <th>Amount ($)</th>
+          <th>Delete</th>
+        </tr>
       </thead>
       <tbody id="sales-table-body"></tbody>
     </table>
   </section>
 
   <!-- Employees Tab -->
-  <section id="employees" class="tab-content" role="tabpanel" tabindex="0" aria-label="Employees tab content">
-    <form id="employees-form" aria-label="Add or edit employee record">
-      <input type="text" id="emp-name" placeholder="Name" required aria-required="true" />
-      <select id="emp-gender" required aria-required="true" aria-label="Gender">
+  <section id="employees" class="tab-content" role="tabpanel" tabindex="0" aria-labelledby="tab-employees" hidden>
+    <h2>Employees</h2>
+    <form id="employees-form" aria-label="Add new employee">
+      <input type="text" id="employee-name" placeholder="Name" required aria-required="true" />
+      <input type="date" id="employee-hire-date" required aria-required="true" />
+      <select id="employee-gender" required aria-required="true">
         <option value="" disabled selected>Gender</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
       </select>
-      <input type="date" id="emp-hiredate" required aria-required="true" />
-      <input type="number" id="emp-logs" min="0" placeholder="Work logs" required aria-required="true" />
-      <button type="submit">Add/Update Employee</button>
+      <input type="number" id="employee-logs" min="0" placeholder="Logs" required aria-required="true" />
+      <button type="submit">Add Employee</button>
     </form>
-    <table aria-describedby="employees-table-desc">
-      <caption id="employees-table-desc">Employee list with details</caption>
+    <table aria-label="Employees table">
       <thead>
-        <tr><th>Name</th><th>Gender</th><th>Hire Date</th><th>Work Logs</th><th>Actions</th></tr>
+        <tr>
+          <th>Name</th>
+          <th>Hire Date</th>
+          <th>Gender</th>
+          <th>Logs</th>
+          <th>Delete</th>
+        </tr>
       </thead>
       <tbody id="employees-table-body"></tbody>
     </table>
   </section>
 
-  <!-- Expenses Tab -->
-  <section id="expenses" class="tab-content" role="tabpanel" tabindex="0" aria-label="Expenses tab content">
-    <form id="expenses-form" aria-label="Add expense record">
-      <input type="date" id="expense-date" required aria-required="true" />
-      <input type="number" id="expense-amount" min="0" step="0.01" placeholder="Amount" required aria-required="true" />
-      <input type="text" id="expense-desc" placeholder="Description" required aria-required="true" />
-      <button type="submit">Add Expense</button>
-    </form>
-    <table aria-describedby="expenses-table-desc">
-      <caption id="expenses-table-desc">Expense records</caption>
-      <thead>
-        <tr><th>Date</th><th>Amount ($)</th><th>Description</th><th>Actions</th></tr>
-      </thead>
-      <tbody id="expenses-table-body"></tbody>
-    </table>
-  </section>
-
   <!-- Payroll Tab -->
-  <section id="payroll" class="tab-content" role="tabpanel" tabindex="0" aria-label="Payroll tab content">
-    <table aria-describedby="payroll-table-desc">
-      <caption id="payroll-table-desc">Payroll calculation</caption>
+  <section id="payroll" class="tab-content" role="tabpanel" tabindex="0" aria-labelledby="tab-payroll" hidden>
+    <h2>Payroll</h2>
+    <table aria-label="Payroll table">
       <thead>
-        <tr><th>Name</th><th>Work Logs</th><th>Pay per Log ($)</th><th>Total Pay ($)</th></tr>
+        <tr>
+          <th>Name</th>
+          <th>Logs</th>
+          <th>Pay per Log ($)</th>
+          <th>Total Pay ($)</th>
+        </tr>
       </thead>
       <tbody id="payroll-table-body"></tbody>
       <tfoot>
@@ -244,14 +320,43 @@
     </table>
   </section>
 
+  <!-- Expenses Tab -->
+  <section id="expenses" class="tab-content" role="tabpanel" tabindex="0" aria-labelledby="tab-expenses" hidden>
+    <h2>Expenses</h2>
+    <form id="expenses-form" aria-label="Add new expense">
+      <input type="date" id="expense-date" required aria-required="true" />
+      <input type="number" id="expense-amount" min="0" step="0.01" placeholder="Amount" required aria-required="true" />
+      <input type="text" id="expense-desc" placeholder="Description" required aria-required="true" />
+      <button type="submit">Add Expense</button>
+    </form>
+    <table aria-label="Expenses table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Amount ($)</th>
+          <th>Description</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="expenses-table-body"></tbody>
+    </table>
+  </section>
+
   <!-- Profit Tab -->
-  <section id="profit" class="tab-content" role="tabpanel" tabindex="0" aria-label="Profit tab content">
-    <div class="profit-summary">
-      <div>Gross Sales: $<span id="profit-gross">0.00</span></div>
-      <div>Total Expenses: $<span id="profit-expenses">0.00</span></div>
-      <div>Total Payroll: $<span id="profit-payroll">0.00</span></div>
-      <div>Tax (20%): $<span id="profit-tax">0.00</span></div>
-      <div><strong>Net Profit: $<span id="profit-net">0.00</span></strong></div>
+  <section id="profit" class="tab-content" role="tabpanel" tabindex="0" aria-labelledby="tab-profit" hidden>
+    <h2>Profit Summary</h2>
+    <div class="profit-container">
+      <div class="profit-row">
+        <label for="tax-rate-input">Tax Percentage (%): </label>
+        <input type="number" id="tax-rate-input" min="0" max="100" step="0.1" value="20" aria-label="Tax percentage input" />
+      </div>
+      <div class="profit-summary" aria-live="polite" aria-atomic="true">
+        <div><span class="label">Gross Sales:</span> $<span id="profit-gross">0.00</span></div>
+        <div><span class="label">Total Expenses:</span> $<span id="profit-expenses">0.00</span></div>
+        <div><span class="label">Total Payroll:</span> $<span id="profit-payroll">0.00</span></div>
+        <div><span class="label">Tax (<span id="tax-rate-display">20</span> %):</span> $<span id="profit-tax">0.00</span></div>
+        <div class="net-profit"><strong>Net Profit: $<span id="profit-net">0.00</span></strong></div>
+      </div>
     </div>
   </section>
 
@@ -261,52 +366,51 @@
 (() => {
   // Constants
   const STORAGE_KEYS = {
-    sales: 'dashboard_sales',
-    employees: 'dashboard_employees',
-    expenses: 'dashboard_expenses',
+    sales: 'dashboard-sales',
+    employees: 'dashboard-employees',
+    expenses: 'dashboard-expenses'
   };
-  const TAX_RATE = 0.2;
+
+  // State
+  let sales = [];
+  let employees = [];
+  let expenses = [];
 
   // Cached DOM elements
-  const loginForm = document.getElementById('login-form');
   const loginContainer = document.getElementById('login-container');
+  const loginForm = document.getElementById('login-form');
   const dashboard = document.getElementById('dashboard');
 
-  const tabs = document.querySelectorAll('.tab');
+  // Tabs & content
+  const tabs = document.querySelectorAll('#tabs button');
   const tabContents = document.querySelectorAll('.tab-content');
 
-  // Sales
+  // Sales elements
   const salesForm = document.getElementById('sales-form');
   const salesTableBody = document.getElementById('sales-table-body');
 
-  // Employees
+  // Employees elements
   const employeesForm = document.getElementById('employees-form');
   const employeesTableBody = document.getElementById('employees-table-body');
 
-  // Expenses
+  // Expenses elements
   const expensesForm = document.getElementById('expenses-form');
   const expensesTableBody = document.getElementById('expenses-table-body');
 
-  // Payroll
+  // Payroll elements
   const payrollTableBody = document.getElementById('payroll-table-body');
   const payrollTotalElem = document.getElementById('payroll-total');
 
-  // Profit
+  // Profit elements
   const profitGrossElem = document.getElementById('profit-gross');
   const profitExpensesElem = document.getElementById('profit-expenses');
   const profitPayrollElem = document.getElementById('profit-payroll');
   const profitTaxElem = document.getElementById('profit-tax');
   const profitNetElem = document.getElementById('profit-net');
+  const taxInput = document.getElementById('tax-rate-input');
+  const taxDisplay = document.getElementById('tax-rate-display');
 
-  // Data stores
-  let sales = [];
-  let employees = [];
-  let expenses = [];
-
-  // For editing employees
-  let editingEmployeeId = null;
-
-  // UTILITIES
+  // --- Helpers ---
   function saveData(key, data) {
     localStorage.setItem(key, JSON.stringify(data));
   }
@@ -314,196 +418,114 @@
     const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : [];
   }
+  // Format number with commas and two decimals
   function formatMoney(num) {
-    return num.toFixed(2);
+    return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  // TAB SWITCHING
+  // --- TAB SWITCHING ---
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      setActiveTab(tab.dataset.tab);
-    });
-    tab.addEventListener('keydown', e => {
-      if(e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        setActiveTab(tab.dataset.tab);
-      }
+      // Deselect all tabs and hide all contents
+      tabs.forEach(t => {
+        t.setAttribute('aria-selected', 'false');
+        t.tabIndex = -1;
+      });
+      tabContents.forEach(c => c.hidden = true);
+
+      // Activate clicked tab and show content
+      tab.setAttribute('aria-selected', 'true');
+      tab.tabIndex = 0;
+      document.getElementById(tab.getAttribute('aria-controls')).hidden = false;
+      document.getElementById(tab.getAttribute('aria-controls')).focus();
     });
   });
-  function setActiveTab(tabName) {
-    tabs.forEach(t => {
-      const isActive = t.dataset.tab === tabName;
-      t.classList.toggle('active', isActive);
-      t.setAttribute('aria-selected', isActive);
-      t.tabIndex = isActive ? 0 : -1;
-    });
-    tabContents.forEach(tc => {
-      tc.classList.toggle('active', tc.id === tabName);
-    });
-  }
 
   // --- SALES ---
   function renderSales() {
     salesTableBody.innerHTML = '';
-    sales.sort((a,b) => a.month.localeCompare(b.month)).forEach(({month, amount}) => {
+    sales.forEach(({ id, month, amount }) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${month}</td>
         <td>$${formatMoney(amount)}</td>
-        <td>
-          <button class="edit-btn" aria-label="Edit sale for ${month}">Edit</button>
-          <button class="delete-btn" aria-label="Delete sale for ${month}">Delete</button>
-        </td>
+        <td><button class="delete-btn" aria-label="Delete sale for ${month}" data-id="${id}">Delete</button></td>
       `;
-      const [editBtn, deleteBtn] = tr.querySelectorAll('button');
-      editBtn.onclick = () => {
-        document.getElementById('sales-month').value = month;
-        document.getElementById('sales-amount').value = amount;
-      };
-      deleteBtn.onclick = () => {
-        if(confirm(`Delete sale record for ${month}?`)) {
-          sales = sales.filter(s => s.month !== month);
-          saveData(STORAGE_KEYS.sales, sales);
-          renderSales();
-          updateProfit();
-        }
-      };
       salesTableBody.appendChild(tr);
     });
   }
-
   salesForm.addEventListener('submit', e => {
     e.preventDefault();
-    const month = document.getElementById('sales-month').value;
-    const amount = parseFloat(document.getElementById('sales-amount').value);
-    if(!month || isNaN(amount) || amount < 0) return alert('Please enter valid month and positive amount.');
-
-    const idx = sales.findIndex(s => s.month === month);
-    if(idx >= 0) {
-      sales[idx].amount = amount; // update
-    } else {
-      sales.push({month, amount});
+    const month = document.getElementById('sale-month').value;
+    const amount = parseFloat(document.getElementById('sale-amount').value);
+    if (!month || isNaN(amount) || amount < 0) {
+      return alert('Please enter a valid month and amount for sales.');
     }
+    sales.push({ id: Date.now().toString(), month, amount });
     saveData(STORAGE_KEYS.sales, sales);
     renderSales();
     updateProfit();
     salesForm.reset();
   });
+  salesTableBody.addEventListener('click', e => {
+    if (e.target.classList.contains('delete-btn')) {
+      const id = e.target.dataset.id;
+      sales = sales.filter(s => s.id !== id);
+      saveData(STORAGE_KEYS.sales, sales);
+      renderSales();
+      updateProfit();
+    }
+  });
 
   // --- EMPLOYEES ---
   function renderEmployees() {
     employeesTableBody.innerHTML = '';
-    employees.forEach(({id, name, gender, hireDate, logs}) => {
+    employees.forEach(({ id, name, hireDate, gender, logs }) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${name}</td>
-        <td>${gender.charAt(0).toUpperCase() + gender.slice(1)}</td>
         <td>${hireDate}</td>
+        <td>${gender}</td>
         <td>${logs}</td>
-        <td>
-          <button class="edit-btn" aria-label="Edit employee ${name}">Edit</button>
-          <button class="delete-btn" aria-label="Delete employee ${name}">Delete</button>
-        </td>
+        <td><button class="delete-btn" aria-label="Delete employee ${name}" data-id="${id}">Delete</button></td>
       `;
-      const [editBtn, deleteBtn] = tr.querySelectorAll('button');
-      editBtn.onclick = () => {
-        document.getElementById('emp-name').value = name;
-        document.getElementById('emp-gender').value = gender;
-        document.getElementById('emp-hiredate').value = hireDate;
-        document.getElementById('emp-logs').value = logs;
-        editingEmployeeId = id;
-      };
-      deleteBtn.onclick = () => {
-        if(confirm(`Delete employee ${name}?`)) {
-          employees = employees.filter(emp => emp.id !== id);
-          saveData(STORAGE_KEYS.employees, employees);
-          renderEmployees();
-          updatePayroll();
-          updateProfit();
-        }
-      };
       employeesTableBody.appendChild(tr);
     });
   }
-
   employeesForm.addEventListener('submit', e => {
     e.preventDefault();
-    const name = document.getElementById('emp-name').value.trim();
-    const gender = document.getElementById('emp-gender').value;
-    const hireDate = document.getElementById('emp-hiredate').value;
-    const logs = parseInt(document.getElementById('emp-logs').value, 10);
-
-    if(!name || !gender || !hireDate || isNaN(logs) || logs < 0) {
-      return alert('Please fill in all employee fields with valid values.');
+    const name = document.getElementById('employee-name').value.trim();
+    const hireDate = document.getElementById('employee-hire-date').value;
+    const gender = document.getElementById('employee-gender').value;
+    const logs = parseInt(document.getElementById('employee-logs').value, 10);
+    if (!name || !hireDate || !gender || isNaN(logs) || logs < 0) {
+      return alert('Please fill out all employee fields correctly.');
     }
-
-    if(editingEmployeeId) {
-      // Update existing employee
-      const idx = employees.findIndex(e => e.id === editingEmployeeId);
-      if(idx >= 0) {
-        employees[idx] = {id: editingEmployeeId, name, gender, hireDate, logs};
-      }
-      editingEmployeeId = null;
-    } else {
-      // Add new employee
-      employees.push({id: Date.now().toString(), name, gender, hireDate, logs});
-    }
+    employees.push({ id: Date.now().toString(), name, hireDate, gender, logs });
     saveData(STORAGE_KEYS.employees, employees);
     renderEmployees();
-    updatePayroll();
+    renderPayroll();
     updateProfit();
     employeesForm.reset();
   });
-
-  // --- EXPENSES ---
-  function renderExpenses() {
-    expensesTableBody.innerHTML = '';
-    expenses.sort((a,b) => b.date.localeCompare(a.date)).forEach(({id, date, amount, description}) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${date}</td>
-        <td>$${formatMoney(amount)}</td>
-        <td>${description}</td>
-        <td>
-          <button class="delete-btn" aria-label="Delete expense on ${date}">Delete</button>
-        </td>
-      `;
-      const deleteBtn = tr.querySelector('button.delete-btn');
-      deleteBtn.onclick = () => {
-        if(confirm(`Delete expense on ${date}?`)) {
-          expenses = expenses.filter(exp => exp.id !== id);
-          saveData(STORAGE_KEYS.expenses, expenses);
-          renderExpenses();
-          updateProfit();
-        }
-      };
-      expensesTableBody.appendChild(tr);
-    });
-  }
-
-  expensesForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const date = document.getElementById('expense-date').value;
-    const amount = parseFloat(document.getElementById('expense-amount').value);
-    const description = document.getElementById('expense-desc').value.trim();
-
-    if(!date || isNaN(amount) || amount < 0 || !description) {
-      return alert('Please fill all expense fields with valid values.');
+  employeesTableBody.addEventListener('click', e => {
+    if (e.target.classList.contains('delete-btn')) {
+      const id = e.target.dataset.id;
+      employees = employees.filter(emp => emp.id !== id);
+      saveData(STORAGE_KEYS.employees, employees);
+      renderEmployees();
+      renderPayroll();
+      updateProfit();
     }
-    expenses.push({id: Date.now().toString(), date, amount, description});
-    saveData(STORAGE_KEYS.expenses, expenses);
-    renderExpenses();
-    updateProfit();
-    expensesForm.reset();
   });
 
   // --- PAYROLL ---
-  function updatePayroll() {
+  function renderPayroll() {
     payrollTableBody.innerHTML = '';
     let totalPayroll = 0;
-    employees.forEach(({name, logs}) => {
-      const payPerLog = name.toLowerCase() === 'john delporte' ? 1200 : 1000;
-      const totalPay = payPerLog * logs;
+    employees.forEach(({ id, name, logs }) => {
+      const payPerLog = 7;
+      const totalPay = logs * payPerLog;
       totalPayroll += totalPay;
       const tr = document.createElement('tr');
       tr.innerHTML = `
@@ -515,52 +537,113 @@
       payrollTableBody.appendChild(tr);
     });
     payrollTotalElem.textContent = `$${formatMoney(totalPayroll)}`;
-    return totalPayroll;
   }
+
+  // --- EXPENSES ---
+  function renderExpenses() {
+    expensesTableBody.innerHTML = '';
+    expenses.forEach(({ id, date, amount, description }) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${date}</td>
+        <td>$${formatMoney(amount)}</td>
+        <td>${description}</td>
+        <td><button class="delete-btn" aria-label="Delete expense ${description}" data-id="${id}">Delete</button></td>
+      `;
+      expensesTableBody.appendChild(tr);
+    });
+  }
+  expensesForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const date = document.getElementById('expense-date').value;
+    const amount = parseFloat(document.getElementById('expense-amount').value);
+    const description = document.getElementById('expense-desc').value.trim();
+    if (!date || isNaN(amount) || amount < 0 || !description) {
+      return alert('Please fill out all expense fields correctly.');
+    }
+    expenses.push({ id: Date.now().toString(), date, amount, description });
+    saveData(STORAGE_KEYS.expenses, expenses);
+    renderExpenses();
+    updateProfit();
+    expensesForm.reset();
+  });
+  expensesTableBody.addEventListener('click', e => {
+    if (e.target.classList.contains('delete-btn')) {
+      const id = e.target.dataset.id;
+      expenses = expenses.filter(exp => exp.id !== id);
+      saveData(STORAGE_KEYS.expenses, expenses);
+      renderExpenses();
+      updateProfit();
+    }
+  });
 
   // --- PROFIT ---
   function updateProfit() {
+    // Calculate sums
     const grossSales = sales.reduce((sum, s) => sum + s.amount, 0);
     const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
-    const totalPayroll = updatePayroll();
+    // Payroll total parsed from text (safe since rendered by script)
+    let payrollTotal = 0;
+    if (payrollTotalElem.textContent) {
+      payrollTotal = Number(payrollTotalElem.textContent.replace(/[^0-9.-]+/g,"")) || 0;
+    }
 
-    const taxableIncome = grossSales - totalExpenses - totalPayroll;
-    const tax = taxableIncome > 0 ? taxableIncome * TAX_RATE : 0;
-    const netProfit = taxableIncome - tax;
+    // Get tax percent
+    let taxPercent = parseFloat(taxInput.value);
+    if (isNaN(taxPercent) || taxPercent < 0) taxPercent = 0;
+    if (taxPercent > 100) taxPercent = 100;
+
+    // Update tax display
+    taxDisplay.textContent = taxPercent.toFixed(1);
+
+    const taxableAmount = grossSales - totalExpenses - payrollTotal;
+    const taxAmount = taxableAmount > 0 ? taxableAmount * (taxPercent / 100) : 0;
+    const netProfit = taxableAmount - taxAmount;
 
     profitGrossElem.textContent = formatMoney(grossSales);
     profitExpensesElem.textContent = formatMoney(totalExpenses);
-    profitPayrollElem.textContent = formatMoney(totalPayroll);
-    profitTaxElem.textContent = formatMoney(tax);
+    profitPayrollElem.textContent = formatMoney(payrollTotal);
+    profitTaxElem.textContent = formatMoney(taxAmount);
     profitNetElem.textContent = formatMoney(netProfit);
   }
 
-  // --- LOAD DATA ---
-  function loadAllData() {
-    sales = loadData(STORAGE_KEYS.sales);
-    employees = loadData(STORAGE_KEYS.employees);
-    expenses = loadData(STORAGE_KEYS.expenses);
-    renderSales();
-    renderEmployees();
-    renderExpenses();
+  // Tax input event
+  taxInput.addEventListener('input', () => {
     updateProfit();
-  }
+  });
 
   // --- LOGIN ---
+  const VALID_USERNAME = 'owner';
+  const VALID_PASSWORD = '1234';
+
   loginForm.addEventListener('submit', e => {
     e.preventDefault();
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
-
-    if (username === 'admin' && password === "Al'sOwners123") {
+    if (username === VALID_USERNAME && password === VALID_PASSWORD) {
       loginContainer.style.display = 'none';
       dashboard.style.display = 'block';
-      loadAllData();
+      tabs[0].focus();
     } else {
-      alert('Invalid username or password');
+      alert('Invalid username or password.');
     }
   });
 
+  // --- INITIALIZATION ---
+  function init() {
+    // Load from localStorage
+    sales = loadData(STORAGE_KEYS.sales);
+    employees = loadData(STORAGE_KEYS.employees);
+    expenses = loadData(STORAGE_KEYS.expenses);
+
+    renderSales();
+    renderEmployees();
+    renderExpenses();
+    renderPayroll();
+    updateProfit();
+  }
+
+  init();
 })();
 </script>
 
