@@ -5,265 +5,182 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Business Dashboard</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-  * {
-    box-sizing: border-box;
-  }
   body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
     background: #f5f7fa;
-    color: #333;
-    min-height: 100vh;
+  }
+  /* Center login */
+  #login-container {
+    height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
+    background: #2c3e50;
+  }
+  #login-form {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    width: 320px;
+  }
+  #login-form input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  #login-form button {
+    width: 100%;
+    padding: 12px;
+    background: #27ae60;
+    border: none;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  #login-form button:hover {
+    background: #219150;
+  }
+
+  /* Dashboard container hidden initially */
+  #dashboard {
+    display: none;
     padding: 20px;
   }
 
-  /* Container */
-  #login-container, #dashboard {
-    background: white;
-    width: 100%;
-    max-width: 960px;
-    border-radius: 12px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    padding: 30px 40px;
-  }
-
-  h2 {
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #222;
-  }
-
-  /* Login */
-  #login-container input[type=text],
-  #login-container input[type=password] {
-    width: 100%;
-    padding: 14px 16px;
-    border: 1.5px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-  }
-  #login-container input[type=text]:focus,
-  #login-container input[type=password]:focus {
-    outline: none;
-    border-color: #007bff;
-  }
-  #login-container button {
-    width: 100%;
-    padding: 14px;
-    background: #007bff;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-size: 18px;
-    font-weight: 600;
-    margin-top: 15px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  #login-container button:hover {
-    background: #0056b3;
-  }
-  #login-error {
-    margin-top: 12px;
-    color: #e03e3e;
-    font-weight: 600;
-  }
-
-  /* Nav */
-  nav {
+  /* Tabs style */
+  .tabs {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-  }
-  nav button {
-    background: none;
-    border: none;
-    padding: 10px 22px;
-    font-weight: 600;
-    font-size: 16px;
-    border-radius: 8px;
-    color: #555;
-    cursor: pointer;
-    transition: background-color 0.25s ease, color 0.25s ease;
-  }
-  nav button.active,
-  nav button:hover {
-    background: #007bff;
-    color: white;
-  }
-  #logout-btn {
-    margin-left: auto;
-    background: #dc3545 !important;
-    color: white !important;
-  }
-  #logout-btn:hover {
-    background: #b52b3a !important;
-  }
-
-  /* Tabs */
-  .tab {
-    display: none;
-  }
-  .tab.active {
-    display: block;
-  }
-
-  /* Forms */
-  form > div {
+    border-bottom: 2px solid #ddd;
     margin-bottom: 15px;
   }
-  label {
-    font-weight: 600;
-    display: block;
-    margin-bottom: 6px;
-  }
-  input[type=text], input[type=number], input[type=date], select, textarea {
-    width: 100%;
-    padding: 12px 14px;
-    font-size: 15px;
-    border-radius: 8px;
-    border: 1.5px solid #ccc;
-    transition: border-color 0.3s ease;
-    font-family: 'Inter', sans-serif;
-  }
-  input[type=text]:focus, input[type=number]:focus, input[type=date]:focus, select:focus, textarea:focus {
-    border-color: #007bff;
-    outline: none;
-  }
-  textarea {
-    resize: vertical;
-  }
-  button.submit-btn {
-    background: #28a745;
-    border: none;
-    padding: 14px 24px;
-    font-weight: 700;
-    font-size: 16px;
-    border-radius: 8px;
-    color: white;
+  .tab {
+    padding: 10px 20px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    user-select: none;
+    border-bottom: 3px solid transparent;
+    transition: border-color 0.3s;
+    font-weight: bold;
+    color: #555;
   }
-  button.submit-btn:hover {
-    background: #1e7e34;
+  .tab.active {
+    border-color: #27ae60;
+    color: #27ae60;
+  }
+
+  /* Content sections */
+  .tab-content {
+    display: none;
+  }
+  .tab-content.active {
+    display: block;
   }
 
   /* Tables */
   table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 12px;
-    font-size: 15px;
+    margin-bottom: 20px;
   }
-  th, td {
-    padding: 12px 14px;
-    border-bottom: 1.5px solid #eee;
+  table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
     text-align: left;
   }
-  th {
-    background: #007bff;
+  table th {
+    background: #27ae60;
     color: white;
-    font-weight: 700;
-    border-radius: 6px 6px 0 0;
-  }
-  tbody tr:hover {
-    background-color: #f1faff;
   }
 
-  /* Small buttons for editing/removing */
-  button.edit-btn, button.delete-btn {
+  /* Forms */
+  form {
+    margin-bottom: 20px;
+  }
+  form input, form select {
+    padding: 6px 8px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+  form button {
+    padding: 8px 15px;
+    background: #27ae60;
     border: none;
-    padding: 6px 10px;
-    border-radius: 6px;
+    color: white;
     cursor: pointer;
-    font-weight: 600;
+    border-radius: 4px;
+  }
+  form button:hover {
+    background: #219150;
+  }
+  .edit-btn, .delete-btn {
+    padding: 5px 8px;
+    margin-right: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 3px;
     font-size: 14px;
-    margin-right: 6px;
-    transition: background-color 0.2s ease;
   }
-  button.edit-btn {
-    background: #ffc107;
-    color: #333;
-  }
-  button.edit-btn:hover {
-    background: #e0a800;
-  }
-  button.delete-btn {
-    background: #dc3545;
+  .edit-btn {
+    background: #2980b9;
     color: white;
   }
-  button.delete-btn:hover {
-    background: #b52b3a;
+  .edit-btn:hover {
+    background: #1c5980;
+  }
+  .delete-btn {
+    background: #c0392b;
+    color: white;
+  }
+  .delete-btn:hover {
+    background: #8a231d;
   }
 
-  /* Responsive */
-  @media (max-width: 600px) {
-    nav {
-      flex-direction: column;
-    }
-    nav button {
-      width: 100%;
-    }
-  }
-
-  /* Profit display styling */
-  .profit-summary {
-    background: #e9f7ef;
-    border: 2px solid #28a745;
-    border-radius: 12px;
-    padding: 20px;
+  /* Profit summary */
+  .profit-summary div {
+    margin-bottom: 8px;
     font-size: 18px;
-    font-weight: 700;
-    color: #155724;
-    max-width: 600px;
   }
 </style>
 </head>
 <body>
 
+<!-- LOGIN FORM -->
 <div id="login-container">
-  <h2>Owner Login</h2>
-  <input type="text" id="username" placeholder="Username" autocomplete="off" />
-  <input type="password" id="password" placeholder="Password" autocomplete="off" />
-  <button id="login-btn">Login</button>
-  <p id="login-error"></p>
+  <form id="login-form" autocomplete="off" aria-label="Owner Login Form">
+    <h2 style="text-align:center; margin-bottom:20px;">Owner Login</h2>
+    <input type="text" id="username" placeholder="Username" required aria-label="Username" />
+    <input type="password" id="password" placeholder="Password" required aria-label="Password" />
+    <button type="submit">Login</button>
+  </form>
 </div>
 
-<div id="dashboard" class="hidden" aria-live="polite">
+<!-- DASHBOARD -->
+<div id="dashboard" aria-live="polite" aria-atomic="true">
 
-  <nav aria-label="Main Navigation">
-    <button data-tab="sales-tab" class="active" aria-controls="sales-tab" aria-selected="true" role="tab">Sales</button>
-    <button data-tab="employees-tab" aria-controls="employees-tab" role="tab" aria-selected="false">Employees</button>
-    <button data-tab="expenses-tab" aria-controls="expenses-tab" role="tab" aria-selected="false">Expenses</button>
-    <button data-tab="payroll-tab" aria-controls="payroll-tab" role="tab" aria-selected="false">Payroll</button>
-    <button data-tab="profit-tab" aria-controls="profit-tab" role="tab" aria-selected="false">Profit</button>
-    <button id="logout-btn" style="margin-left:auto;">Logout</button>
-  </nav>
+  <!-- Tabs -->
+  <div class="tabs" role="tablist" aria-label="Dashboard Tabs">
+    <div class="tab active" role="tab" tabindex="0" aria-selected="true" data-tab="sales">Sales</div>
+    <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="employees">Employees</div>
+    <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="expenses">Expenses</div>
+    <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="payroll">Payroll</div>
+    <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="profit">Profit</div>
+  </div>
 
   <!-- Sales Tab -->
-  <section id="sales-tab" class="tab active" role="tabpanel" tabindex="0" aria-labelledby="sales-tab-btn">
-    <h2>Sales</h2>
-    <form id="sales-form" aria-label="Add Sales Record">
-      <div>
-        <label for="sales-month">Month</label>
-        <input type="month" id="sales-month" required />
-      </div>
-      <div>
-        <label for="sales-amount">Amount ($)</label>
-        <input type="number" id="sales-amount" min="0" step="0.01" required />
-      </div>
-      <button type="submit" class="submit-btn">Add / Update Sale</button>
+  <section id="sales" class="tab-content active" role="tabpanel" tabindex="0" aria-label="Sales tab content">
+    <form id="sales-form" aria-label="Add or edit sales record">
+      <input type="month" id="sales-month" required aria-required="true" />
+      <input type="number" id="sales-amount" min="0" step="0.01" placeholder="Amount" required aria-required="true" />
+      <button type="submit">Add/Update Sale</button>
     </form>
-
-    <table aria-label="Sales Records">
+    <table aria-describedby="sales-table-desc">
+      <caption id="sales-table-desc">Sales records by month and amount</caption>
       <thead>
         <tr><th>Month</th><th>Amount ($)</th><th>Actions</th></tr>
       </thead>
@@ -272,61 +189,37 @@
   </section>
 
   <!-- Employees Tab -->
-  <section id="employees-tab" class="tab" role="tabpanel" tabindex="0" aria-labelledby="employees-tab-btn">
-    <h2>Employees</h2>
-    <form id="employees-form" aria-label="Add Employee">
-      <div>
-        <label for="emp-name">Name</label>
-        <input type="text" id="emp-name" placeholder="Full Name" required />
-      </div>
-      <div>
-        <label for="emp-gender">Gender</label>
-        <select id="emp-gender" required>
-          <option value="" disabled selected>Select gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-      <div>
-        <label for="emp-hiredate">Hire Date</label>
-        <input type="date" id="emp-hiredate" required />
-      </div>
-      <div>
-        <label for="emp-logs">Work Logs (Number of logs worked)</label>
-        <input type="number" id="emp-logs" min="0" step="1" value="0" required />
-      </div>
-      <button type="submit" class="submit-btn">Add / Update Employee</button>
+  <section id="employees" class="tab-content" role="tabpanel" tabindex="0" aria-label="Employees tab content">
+    <form id="employees-form" aria-label="Add or edit employee record">
+      <input type="text" id="emp-name" placeholder="Name" required aria-required="true" />
+      <select id="emp-gender" required aria-required="true" aria-label="Gender">
+        <option value="" disabled selected>Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+      <input type="date" id="emp-hiredate" required aria-required="true" />
+      <input type="number" id="emp-logs" min="0" placeholder="Work logs" required aria-required="true" />
+      <button type="submit">Add/Update Employee</button>
     </form>
-
-    <table aria-label="Employees List">
+    <table aria-describedby="employees-table-desc">
+      <caption id="employees-table-desc">Employee list with details</caption>
       <thead>
-        <tr><th>Name</th><th>Gender</th><th>Hire Date</th><th>Logs</th><th>Actions</th></tr>
+        <tr><th>Name</th><th>Gender</th><th>Hire Date</th><th>Work Logs</th><th>Actions</th></tr>
       </thead>
       <tbody id="employees-table-body"></tbody>
     </table>
   </section>
 
   <!-- Expenses Tab -->
-  <section id="expenses-tab" class="tab" role="tabpanel" tabindex="0" aria-labelledby="expenses-tab-btn">
-    <h2>Expenses</h2>
-    <form id="expenses-form" aria-label="Add Expense">
-      <div>
-        <label for="expense-date">Date</label>
-        <input type="date" id="expense-date" required />
-      </div>
-      <div>
-        <label for="expense-amount">Amount ($)</label>
-        <input type="number" id="expense-amount" min="0" step="0.01" required />
-      </div>
-      <div>
-        <label for="expense-desc">Description</label>
-        <textarea id="expense-desc" rows="2" placeholder="What was this expense for?" required></textarea>
-      </div>
-      <button type="submit" class="submit-btn">Add Expense</button>
+  <section id="expenses" class="tab-content" role="tabpanel" tabindex="0" aria-label="Expenses tab content">
+    <form id="expenses-form" aria-label="Add expense record">
+      <input type="date" id="expense-date" required aria-required="true" />
+      <input type="number" id="expense-amount" min="0" step="0.01" placeholder="Amount" required aria-required="true" />
+      <input type="text" id="expense-desc" placeholder="Description" required aria-required="true" />
+      <button type="submit">Add Expense</button>
     </form>
-
-    <table aria-label="Expenses List">
+    <table aria-describedby="expenses-table-desc">
+      <caption id="expenses-table-desc">Expense records</caption>
       <thead>
         <tr><th>Date</th><th>Amount ($)</th><th>Description</th><th>Actions</th></tr>
       </thead>
@@ -335,32 +228,30 @@
   </section>
 
   <!-- Payroll Tab -->
-  <section id="payroll-tab" class="tab" role="tabpanel" tabindex="0" aria-labelledby="payroll-tab-btn">
-    <h2>Payroll</h2>
-    <table aria-label="Payroll Details">
+  <section id="payroll" class="tab-content" role="tabpanel" tabindex="0" aria-label="Payroll tab content">
+    <table aria-describedby="payroll-table-desc">
+      <caption id="payroll-table-desc">Payroll calculation</caption>
       <thead>
-        <tr><th>Name</th><th>Logs</th><th>Pay per Log ($)</th><th>Total Pay ($)</th></tr>
+        <tr><th>Name</th><th>Work Logs</th><th>Pay per Log ($)</th><th>Total Pay ($)</th></tr>
       </thead>
       <tbody id="payroll-table-body"></tbody>
       <tfoot>
-        <tr style="font-weight: 700; border-top: 2px solid #007bff;">
-          <td colspan="3" style="text-align:right;">Total Payroll</td>
-          <td id="payroll-total">$0.00</td>
+        <tr>
+          <th colspan="3" style="text-align:right;">Total Payroll:</th>
+          <th id="payroll-total">$0.00</th>
         </tr>
       </tfoot>
     </table>
   </section>
 
   <!-- Profit Tab -->
-  <section id="profit-tab" class="tab" role="tabpanel" tabindex="0" aria-labelledby="profit-tab-btn">
-    <h2>Profit Summary</h2>
-    <div class="profit-summary" aria-live="polite">
-      <p><strong>Gross Revenue (Total Sales):</strong> $<span id="profit-gross">0.00</span></p>
-      <p><strong>Total Expenses:</strong> $<span id="profit-expenses">0.00</span></p>
-      <p><strong>Total Payroll:</strong> $<span id="profit-payroll">0.00</span></p>
-      <p><strong>Tax (20% of Revenue):</strong> $<span id="profit-tax">0.00</span></p>
-      <hr />
-      <p style="font-size: 22px; margin-top: 15px;"><strong>Net Profit:</strong> $<span id="profit-net">0.00</span></p>
+  <section id="profit" class="tab-content" role="tabpanel" tabindex="0" aria-label="Profit tab content">
+    <div class="profit-summary">
+      <div>Gross Sales: $<span id="profit-gross">0.00</span></div>
+      <div>Total Expenses: $<span id="profit-expenses">0.00</span></div>
+      <div>Total Payroll: $<span id="profit-payroll">0.00</span></div>
+      <div>Tax (20%): $<span id="profit-tax">0.00</span></div>
+      <div><strong>Net Profit: $<span id="profit-net">0.00</span></strong></div>
     </div>
   </section>
 
@@ -368,120 +259,90 @@
 
 <script>
 (() => {
-  // Login logic
+  // Constants
+  const STORAGE_KEYS = {
+    sales: 'dashboard_sales',
+    employees: 'dashboard_employees',
+    expenses: 'dashboard_expenses',
+  };
+  const TAX_RATE = 0.2;
+
+  // Cached DOM elements
+  const loginForm = document.getElementById('login-form');
   const loginContainer = document.getElementById('login-container');
   const dashboard = document.getElementById('dashboard');
-  const loginBtn = document.getElementById('login-btn');
-  const logoutBtn = document.getElementById('logout-btn');
-  const loginError = document.getElementById('login-error');
 
-  const USERNAME = 'admin';
-  const PASSWORD = "Al'sOwners123";
+  const tabs = document.querySelectorAll('.tab');
+  const tabContents = document.querySelectorAll('.tab-content');
 
-  // Tabs nav buttons
-  const navButtons = [...document.querySelectorAll('nav button[data-tab]')];
-  const tabs = navButtons.map(btn => document.getElementById(btn.dataset.tab));
-
-  // Forms & table bodies
+  // Sales
   const salesForm = document.getElementById('sales-form');
   const salesTableBody = document.getElementById('sales-table-body');
 
+  // Employees
   const employeesForm = document.getElementById('employees-form');
   const employeesTableBody = document.getElementById('employees-table-body');
 
+  // Expenses
   const expensesForm = document.getElementById('expenses-form');
   const expensesTableBody = document.getElementById('expenses-table-body');
 
+  // Payroll
   const payrollTableBody = document.getElementById('payroll-table-body');
   const payrollTotalElem = document.getElementById('payroll-total');
 
+  // Profit
   const profitGrossElem = document.getElementById('profit-gross');
   const profitExpensesElem = document.getElementById('profit-expenses');
   const profitPayrollElem = document.getElementById('profit-payroll');
   const profitTaxElem = document.getElementById('profit-tax');
   const profitNetElem = document.getElementById('profit-net');
 
-  // Constants
-  const TAX_RATE = 0.2;
+  // Data stores
+  let sales = [];
+  let employees = [];
+  let expenses = [];
 
-  // Storage keys
-  const STORAGE_KEYS = {
-    sales: 'business_dashboard_sales',
-    employees: 'business_dashboard_employees',
-    expenses: 'business_dashboard_expenses',
-    loggedIn: 'business_dashboard_loggedIn',
-  };
+  // For editing employees
+  let editingEmployeeId = null;
 
-  // Utility: format number to 2 decimals
-  function formatMoney(num) {
-    return Number(num).toFixed(2);
+  // UTILITIES
+  function saveData(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
   }
-
-  // STORAGE helpers
   function loadData(key) {
     const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : [];
   }
-  function saveData(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
+  function formatMoney(num) {
+    return num.toFixed(2);
   }
 
-  // LOGIN check on load
-  function checkLogin() {
-    if(localStorage.getItem(STORAGE_KEYS.loggedIn) === 'true') {
-      showDashboard();
-    } else {
-      showLogin();
-    }
-  }
-
-  function showLogin() {
-    loginContainer.classList.remove('hidden');
-    dashboard.classList.add('hidden');
-  }
-  function showDashboard() {
-    loginContainer.classList.add('hidden');
-    dashboard.classList.remove('hidden');
-    loadAllData();
-    updatePayroll();
-    updateProfit();
-  }
-
-  loginBtn.addEventListener('click', () => {
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value;
-
-    if(username === USERNAME && password === PASSWORD) {
-      localStorage.setItem(STORAGE_KEYS.loggedIn, 'true');
-      loginError.textContent = '';
-      showDashboard();
-    } else {
-      loginError.textContent = 'Invalid username or password.';
-    }
-  });
-
-  logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem(STORAGE_KEYS.loggedIn);
-    showLogin();
-  });
-
-  // Tab switching
-  navButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      navButtons.forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      tabs.forEach(tab => tab.classList.remove('active'));
-      document.getElementById(btn.dataset.tab).classList.add('active');
+  // TAB SWITCHING
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      setActiveTab(tab.dataset.tab);
+    });
+    tab.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setActiveTab(tab.dataset.tab);
+      }
     });
   });
+  function setActiveTab(tabName) {
+    tabs.forEach(t => {
+      const isActive = t.dataset.tab === tabName;
+      t.classList.toggle('active', isActive);
+      t.setAttribute('aria-selected', isActive);
+      t.tabIndex = isActive ? 0 : -1;
+    });
+    tabContents.forEach(tc => {
+      tc.classList.toggle('active', tc.id === tabName);
+    });
+  }
 
   // --- SALES ---
-  let sales = [];
-
   function renderSales() {
     salesTableBody.innerHTML = '';
     sales.sort((a,b) => a.month.localeCompare(b.month)).forEach(({month, amount}) => {
@@ -530,8 +391,6 @@
   });
 
   // --- EMPLOYEES ---
-  let employees = [];
-
   function renderEmployees() {
     employeesTableBody.innerHTML = '';
     employees.forEach(({id, name, gender, hireDate, logs}) => {
@@ -567,8 +426,6 @@
     });
   }
 
-  let editingEmployeeId = null;
-
   employeesForm.addEventListener('submit', e => {
     e.preventDefault();
     const name = document.getElementById('emp-name').value.trim();
@@ -599,8 +456,6 @@
   });
 
   // --- EXPENSES ---
-  let expenses = [];
-
   function renderExpenses() {
     expensesTableBody.innerHTML = '';
     expenses.sort((a,b) => b.date.localeCompare(a.date)).forEach(({id, date, amount, description}) => {
@@ -633,9 +488,8 @@
     const description = document.getElementById('expense-desc').value.trim();
 
     if(!date || isNaN(amount) || amount < 0 || !description) {
-      return alert('Please fill in all expense fields with valid values.');
+      return alert('Please fill all expense fields with valid values.');
     }
-
     expenses.push({id: Date.now().toString(), date, amount, description});
     saveData(STORAGE_KEYS.expenses, expenses);
     renderExpenses();
@@ -644,21 +498,19 @@
   });
 
   // --- PAYROLL ---
-  const PAY_PER_LOG = 10; // fixed pay per work log for employees
-
   function updatePayroll() {
     payrollTableBody.innerHTML = '';
     let totalPayroll = 0;
-    employees.forEach(({id, name, logs}) => {
-      const pay = logs * PAY_PER_LOG;
-      totalPayroll += pay;
-
+    employees.forEach(({name, logs}) => {
+      const payPerLog = name.toLowerCase() === 'john delporte' ? 1200 : 1000;
+      const totalPay = payPerLog * logs;
+      totalPayroll += totalPay;
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${name}</td>
         <td>${logs}</td>
-        <td>$${formatMoney(PAY_PER_LOG)}</td>
-        <td>$${formatMoney(pay)}</td>
+        <td>$${formatMoney(payPerLog)}</td>
+        <td>$${formatMoney(totalPay)}</td>
       `;
       payrollTableBody.appendChild(tr);
     });
@@ -668,44 +520,49 @@
 
   // --- PROFIT ---
   function updateProfit() {
-    const totalSales = sales.reduce((sum, s) => sum + s.amount, 0);
+    const grossSales = sales.reduce((sum, s) => sum + s.amount, 0);
     const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
     const totalPayroll = updatePayroll();
-    const tax = totalSales * TAX_RATE;
-    const netProfit = totalSales - (totalExpenses + totalPayroll + tax);
 
-    profitGrossElem.textContent = formatMoney(totalSales);
+    const taxableIncome = grossSales - totalExpenses - totalPayroll;
+    const tax = taxableIncome > 0 ? taxableIncome * TAX_RATE : 0;
+    const netProfit = taxableIncome - tax;
+
+    profitGrossElem.textContent = formatMoney(grossSales);
     profitExpensesElem.textContent = formatMoney(totalExpenses);
     profitPayrollElem.textContent = formatMoney(totalPayroll);
     profitTaxElem.textContent = formatMoney(tax);
     profitNetElem.textContent = formatMoney(netProfit);
   }
 
-  // Load all data from localStorage on dashboard show
+  // --- LOAD DATA ---
   function loadAllData() {
     sales = loadData(STORAGE_KEYS.sales);
     employees = loadData(STORAGE_KEYS.employees);
     expenses = loadData(STORAGE_KEYS.expenses);
-
     renderSales();
     renderEmployees();
     renderExpenses();
+    updateProfit();
   }
 
-  // Initialize app on page load
-  checkLogin();
+  // --- LOGIN ---
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (username === 'admin' && password === "Al'sOwners123") {
+      loginContainer.style.display = 'none';
+      dashboard.style.display = 'block';
+      loadAllData();
+    } else {
+      alert('Invalid username or password');
+    }
+  });
+
 })();
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
