@@ -266,17 +266,15 @@
   <!-- EXPENSES TAB -->
   <div id="expenses-tab" class="tabcontent" role="tabpanel" tabindex="0">
     <form id="expenses-form" class="form-group" aria-label="Add Expense">
-      <label for="expense-date">Date</label>
-      <input type="date" id="expense-date" required />
+      <label for="expense-month">Month (YYYY-MM)</label>
+      <input type="month" id="expense-month" required />
       <label for="expense-amount">Amount ($)</label>
       <input type="number" id="expense-amount" min="0" step="0.01" required />
-      <label for="expense-desc">Description</label>
-      <input type="text" id="expense-desc" required />
       <button type="submit">Add Expense</button>
     </form>
     <table class="data-table" aria-label="Expenses Data">
       <thead>
-        <tr><th>Date</th><th>Amount</th><th>Description</th><th>Action</th></tr>
+        <tr><th>Month</th><th>Amount</th><th>Action</th></tr>
       </thead>
       <tbody id="expenses-table-body"></tbody>
     </table>
@@ -284,196 +282,334 @@
 
   <!-- PROFIT TAB -->
   <div id="profit-tab" class="tabcontent" role="tabpanel" tabindex="0">
-    <form id="tax-form" aria-label="Set Tax Percentage">
-      <label for="tax-input">Tax Percentage (%):</label>
-      <input type="number" id="tax-input" min="0" max="100" step="0.1" value="0" aria-describedby="tax-display" />
-      <span id="tax-display" aria-live="polite" aria-atomic="true" style="margin-left: 12px; font-weight: 700;">0.0</span>
+    <form id="tax-form" aria-label="Tax Input">
+      <label for="tax-input">Tax %:</label>
+      <input type="number" id="tax-input" min="0" max="100" step="0.1" value="30" aria-describedby="tax-display" />
+      <span id="tax-display">30%</span>
     </form>
-    <table class="data-table" aria-label="Profit Summary">
-      <thead>
-        <tr><th>Metric</th><th>Amount ($)</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Gross Sales</td><td id="profit-gross">$0.00</td></tr>
-        <tr><td>Expenses</td><td id="profit-expenses">$0.00</td></tr>
-        <tr><td>Payroll</td><td id="profit-payroll">$0.00</td></tr>
-        <tr><td>Tax</td><td id="profit-tax">$0.00</td></tr>
-        <tr><th>Net Profit</th><th id="profit-net">$0.00</th></tr>
-      </tbody>
-    </table>
+    <p><strong>Total Sales:</strong> $<span id="total-sales">0.00</span></p>
+    <p><strong>Total Payroll:</strong> $<span id="total-payroll">0.00</span></p>
+    <p><strong>Total Expenses:</strong> $<span id="total-expenses">0.00</span></p>
+    <p><strong>Profit After Tax:</strong> $<span id="profit-after-tax">0.00</span></p>
   </div>
 </div>
 
 <script>
 (() => {
-  // Elements
-  const loginContainer = document.getElementById('login-container');
-  const loginForm = document.getElementById('login-form');
-  const dashboard = document.getElementById('dashboard');
-  const tabs = [...document.querySelectorAll('.tabnav button')];
-  const tabContents = [...document.querySelectorAll('.tabcontent')];
+  // ======= Constants =======
+  const VALID_USERNAME = "admin";
+  const VALID_PASSWORD = "Al'sOwners123";
 
-  // Sales elements
-  const salesForm = document.getElementById('sales-form');
-  const salesTableBody = document.getElementById('sales-table-body');
+  // ======= Elements =======
+  const loginContainer = document.getElementById("login-container");
+  const loginForm = document.getElementById("login-form");
+  const usernameInput = document.getElementById("username");
+  const passwordInput = document.getElementById("password");
+  const dashboard = document.getElementById("dashboard");
 
-  // Employees elements
-  const employeesForm = document.getElementById('employees-form');
-  const employeesTableBody = document.getElementById('employees-table-body');
+  const tabs = dashboard.querySelectorAll(".tablinks");
+  const tabContents = dashboard.querySelectorAll(".tabcontent");
 
-  // Payroll elements
-  const payrollTableBody = document.getElementById('payroll-table-body');
-  const payrollTotalElem = document.getElementById('payroll-total');
+  // --- SALES ---
+  const salesForm = document.getElementById("sales-form");
+  const saleMonthInput = document.getElementById("sale-month");
+  const saleAmountInput = document.getElementById("sale-amount");
+  const salesTableBody = document.getElementById("sales-table-body");
 
-  // Expenses elements
-  const expensesForm = document.getElementById('expenses-form');
-  const expensesTableBody = document.getElementById('expenses-table-body');
+  // --- EMPLOYEES ---
+  const employeesForm = document.getElementById("employees-form");
+  const employeeNameInput = document.getElementById("employee-name");
+  const employeeHireDateInput = document.getElementById("employee-hire-date");
+  const employeeGenderInput = document.getElementById("employee-gender");
+  const employeeLogsInput = document.getElementById("employee-logs");
+  const employeesTableBody = document.getElementById("employees-table-body");
 
-  // Profit elements
-  const taxInput = document.getElementById('tax-input');
-  const taxDisplay = document.getElementById('tax-display');
-  const profitGrossElem = document.getElementById('profit-gross');
-  const profitExpensesElem = document.getElementById('profit-expenses');
-  const profitPayrollElem = document.getElementById('profit-payroll');
-  const profitTaxElem = document.getElementById('profit-tax');
-  const profitNetElem = document.getElementById('profit-net');
+  // --- PAYROLL ---
+  const payrollTableBody = document.getElementById("payroll-table-body");
+  const payrollTotalDisplay = document.getElementById("payroll-total");
 
-  // Data storage keys
-  const STORAGE_KEYS = {
-    sales: 'dashboard_sales',
-    employees: 'dashboard_employees',
-    expenses: 'dashboard_expenses'
-  };
+  // --- EXPENSES ---
+  const expensesForm = document.getElementById("expenses-form");
+  const expenseMonthInput = document.getElementById("expense-month");
+  const expenseAmountInput = document.getElementById("expense-amount");
+  const expensesTableBody = document.getElementById("expenses-table-body");
 
-  // Data arrays
+  // --- PROFIT ---
+  const taxInput = document.getElementById("tax-input");
+  const taxDisplay = document.getElementById("tax-display");
+  const totalSalesDisplay = document.getElementById("total-sales");
+  const totalPayrollDisplay = document.getElementById("total-payroll");
+  const totalExpensesDisplay = document.getElementById("total-expenses");
+  const profitAfterTaxDisplay = document.getElementById("profit-after-tax");
+
+  // ======= Data Storage Keys =======
+  const SALES_KEY = "business_dashboard_sales";
+  const EMPLOYEES_KEY = "business_dashboard_employees";
+  const EXPENSES_KEY = "business_dashboard_expenses";
+  const TAX_KEY = "business_dashboard_tax";
+
+  // ======= Data =======
   let sales = [];
   let employees = [];
   let expenses = [];
+  let taxPercent = 30;
 
-  // Format money with commas and 2 decimals
-  function formatMoney(num) {
-    return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
-
-  // Save/load to localStorage
-  function saveData(key, data) {
+  // ======= Utility Functions =======
+  function saveToStorage(key, data) {
     localStorage.setItem(key, JSON.stringify(data));
   }
-  function loadData(key) {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : [];
+  function loadFromStorage(key) {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : [];
   }
 
-  // Tab switching logic
-  tabs.forEach(btn => {
-    btn.addEventListener('click', () => {
-      // Set active button
-      tabs.forEach(t => {
-        t.classList.remove('active');
-        t.setAttribute('aria-selected', 'false');
-        t.tabIndex = -1;
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      btn.tabIndex = 0;
-      btn.focus();
+  function formatCurrency(num) {
+    return num.toLocaleString(undefined, { style: 'currency', currency: 'USD' });
+  }
 
-      // Show tab content
-      const tabId = btn.dataset.tab;
-      tabContents.forEach(tc => {
-        if (tc.id === tabId) {
-          tc.classList.add('active');
-          tc.style.display = 'block';
-          tc.focus();
-        } else {
-          tc.classList.remove('active');
-          tc.style.display = 'none';
-        }
-      });
+  // ======= Login Logic =======
+  loginForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const user = usernameInput.value.trim();
+    const pass = passwordInput.value;
+
+    if (user === VALID_USERNAME && pass === VALID_PASSWORD) {
+      loginContainer.style.display = "none";
+      dashboard.style.display = "block";
+      initDashboard();
+    } else {
+      alert("Invalid username or password.");
+    }
+  });
+
+  // ======= Tab Switching Logic =======
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      activateTab(tab);
     });
   });
 
-  // --- SALES ---
+  function activateTab(selectedTab) {
+    tabs.forEach(tab => {
+      tab.classList.remove("active");
+      tab.setAttribute("aria-selected", "false");
+      tab.tabIndex = -1;
+    });
+    tabContents.forEach(content => {
+      content.classList.remove("active");
+    });
+
+    selectedTab.classList.add("active");
+    selectedTab.setAttribute("aria-selected", "true");
+    selectedTab.tabIndex = 0;
+
+    const tabId = selectedTab.getAttribute("data-tab");
+    document.getElementById(tabId).classList.add("active");
+    document.getElementById(tabId).focus();
+  }
+
+  // ======= Sales Logic =======
+  salesForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const month = saleMonthInput.value;
+    const amount = parseFloat(saleAmountInput.value);
+    if (!month || isNaN(amount) || amount < 0) return alert("Please enter valid sales data.");
+
+    // Check for duplicate month sales, update if exists
+    const existingIndex = sales.findIndex(s => s.month === month);
+    if (existingIndex !== -1) {
+      sales[existingIndex].amount = amount;
+    } else {
+      sales.push({ month, amount });
+    }
+    saveToStorage(SALES_KEY, sales);
+    renderSales();
+    updateProfitTab();
+    salesForm.reset();
+  });
+
   function renderSales() {
-    salesTableBody.innerHTML = '';
-    sales.forEach(({ id, month, amount }) => {
-      const tr = document.createElement('tr');
+    salesTableBody.innerHTML = "";
+    // Sort sales by month ascending
+    sales.sort((a,b) => a.month.localeCompare(b.month));
+    sales.forEach(({month, amount}, i) => {
+      const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${month}</td>
-        <td>$${formatMoney(amount)}</td>
-        <td><button class="delete-btn" aria-label="Delete sale for ${month}" data-id="${id}">Delete</button></td>
+        <td>${formatCurrency(amount)}</td>
+        <td><button class="delete-btn" data-index="${i}" aria-label="Delete sales for ${month}">Delete</button></td>
       `;
       salesTableBody.appendChild(tr);
     });
   }
-  salesForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const month = document.getElementById('sale-month').value;
-    const amount = parseFloat(document.getElementById('sale-amount').value);
-    if (!month || isNaN(amount) || amount < 0) {
-      return alert('Please fill out all sales fields correctly.');
-    }
-    sales.push({ id: Date.now().toString(), month, amount });
-    saveData(STORAGE_KEYS.sales, sales);
-    renderSales();
-    updateProfit();
-    salesForm.reset();
-  });
-  salesTableBody.addEventListener('click', e => {
-    if (e.target.classList.contains('delete-btn')) {
-      const id = e.target.dataset.id;
-      sales = sales.filter(s => s.id !== id);
-      saveData(STORAGE_KEYS.sales, sales);
+  salesTableBody.addEventListener("click", e => {
+    if (e.target.classList.contains("delete-btn")) {
+      const idx = +e.target.dataset.index;
+      sales.splice(idx, 1);
+      saveToStorage(SALES_KEY, sales);
       renderSales();
-      updateProfit();
+      updateProfitTab();
     }
   });
 
-  // --- EMPLOYEES ---
+  // ======= Employees Logic =======
+  employeesForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const name = employeeNameInput.value.trim();
+    const hireDate = employeeHireDateInput.value;
+    const gender = employeeGenderInput.value;
+    const logs = parseInt(employeeLogsInput.value, 10);
+    if (!name || !hireDate || !gender || isNaN(logs) || logs < 0) return alert("Please enter valid employee data.");
+
+    // Prevent duplicate employee name
+    if (employees.some(emp => emp.name.toLowerCase() === name.toLowerCase())) {
+      return alert("Employee with this name already exists.");
+    }
+
+    employees.push({ name, hireDate, gender, logs });
+    saveToStorage(EMPLOYEES_KEY, employees);
+    renderEmployees();
+    renderPayroll();
+    updateProfitTab();
+    employeesForm.reset();
+  });
+
   function renderEmployees() {
-    employeesTableBody.innerHTML = '';
-    employees.forEach(({ id, name, hireDate, gender, logs }) => {
-      const tr = document.createElement('tr');
+    employeesTableBody.innerHTML = "";
+    employees.forEach(({name, hireDate, gender, logs}, i) => {
+      const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${name}</td>
         <td>${hireDate}</td>
         <td>${gender}</td>
         <td>${logs}</td>
-        <td><button class="delete-btn" aria-label="Delete employee ${name}" data-id="${id}">Delete</button></td>
+        <td><button class="delete-btn" data-index="${i}" aria-label="Delete employee ${name}">Delete</button></td>
       `;
       employeesTableBody.appendChild(tr);
     });
   }
-  employeesForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const name = document.getElementById('employee-name').value.trim();
-    const hireDate = document.getElementById('employee-hire-date').value;
-    const gender = document.getElementById('employee-gender').value;
-    const logs = parseInt(document.getElementById('employee-logs').value, 10);
-    if (!name || !hireDate || !gender || isNaN(logs) || logs < 0) {
-      return alert('Please fill out all employee fields correctly.');
-    }
-    employees.push({ id: Date.now().toString(), name, hireDate, gender, logs });
-    saveData(STORAGE_KEYS.employees, employees);
-    renderEmployees();
-    renderPayroll();
-    updateProfit();
-    employeesForm.reset();
-  });
-  employeesTableBody.addEventListener('click', e => {
-    if (e.target.classList.contains('delete-btn')) {
-      const id = e.target.dataset.id;
-      employees = employees.filter(emp => emp.id !== id);
-      saveData(STORAGE_KEYS.employees, employees);
+  employeesTableBody.addEventListener("click", e => {
+    if (e.target.classList.contains("delete-btn")) {
+      const idx = +e.target.dataset.index;
+      employees.splice(idx, 1);
+      saveToStorage(EMPLOYEES_KEY, employees);
       renderEmployees();
       renderPayroll();
-      updateProfit();
+      updateProfitTab();
     }
   });
 
-  // --- PAYROLL ---
+  // ======= Payroll Logic =======
   function renderPayroll() {
-    payrollTableBody.innerHTML = '';
+    payrollTableBody.innerHTML = "";
+    const payPerLog = 9.75;
     let totalPayroll = 0;
-    employees.forEach(({ id, name, logs }) => {
-      const payPerLog = name === "John Delporte" ? 1200 : 100
+
+    employees.forEach(({name, logs}) => {
+      const totalPay = logs * payPerLog;
+      totalPayroll += totalPay;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${name}</td>
+        <td>${logs}</td>
+        <td>${formatCurrency(payPerLog)}</td>
+        <td>${formatCurrency(totalPay)}</td>
+      `;
+      payrollTableBody.appendChild(tr);
+    });
+    payrollTotalDisplay.textContent = formatCurrency(totalPayroll);
+  }
+
+  // ======= Expenses Logic =======
+  expensesForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const month = expenseMonthInput.value;
+    const amount = parseFloat(expenseAmountInput.value);
+    if (!month || isNaN(amount) || amount < 0) return alert("Please enter valid expense data.");
+
+    // Check duplicate month for expenses and update
+    const existingIndex = expenses.findIndex(exp => exp.month === month);
+    if (existingIndex !== -1) {
+      expenses[existingIndex].amount = amount;
+    } else {
+      expenses.push({ month, amount });
+    }
+    saveToStorage(EXPENSES_KEY, expenses);
+    renderExpenses();
+    updateProfitTab();
+    expensesForm.reset();
+  });
+
+  function renderExpenses() {
+    expensesTableBody.innerHTML = "";
+    expenses.sort((a,b) => a.month.localeCompare(b.month));
+    expenses.forEach(({month, amount}, i) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${month}</td>
+        <td>${formatCurrency(amount)}</td>
+        <td><button class="delete-btn" data-index="${i}" aria-label="Delete expense for ${month}">Delete</button></td>
+      `;
+      expensesTableBody.appendChild(tr);
+    });
+  }
+  expensesTableBody.addEventListener("click", e => {
+    if (e.target.classList.contains("delete-btn")) {
+      const idx = +e.target.dataset.index;
+      expenses.splice(idx, 1);
+      saveToStorage(EXPENSES_KEY, expenses);
+      renderExpenses();
+      updateProfitTab();
+    }
+  });
+
+  // ======= Profit Tab Logic =======
+  function updateProfitTab() {
+    const totalSales = sales.reduce((sum, s) => sum + s.amount, 0);
+    const totalPayroll = employees.reduce((sum, emp) => sum + (emp.logs * 9.75), 0);
+    const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+
+    totalSalesDisplay.textContent = totalSales.toFixed(2);
+    totalPayrollDisplay.textContent = totalPayroll.toFixed(2);
+    totalExpensesDisplay.textContent = totalExpenses.toFixed(2);
+
+    const taxableAmount = totalSales - totalPayroll - totalExpenses;
+    const tax = taxableAmount * (taxPercent / 100);
+    const profitAfterTax = taxableAmount - tax;
+
+    profitAfterTaxDisplay.textContent = profitAfterTax.toFixed(2);
+  }
+
+  taxInput.addEventListener("input", () => {
+    let val = parseFloat(taxInput.value);
+    if (isNaN(val) || val < 0) val = 0;
+    if (val > 100) val = 100;
+    taxPercent = val;
+    taxInput.value = val.toFixed(1);
+    taxDisplay.textContent = val.toFixed(1) + "%";
+    localStorage.setItem(TAX_KEY, val);
+    updateProfitTab();
+  });
+
+  // ======= Initialization =======
+  function initDashboard() {
+    // Load from storage
+    sales = loadFromStorage(SALES_KEY);
+    employees = loadFromStorage(EMPLOYEES_KEY);
+    expenses = loadFromStorage(EXPENSES_KEY);
+    const savedTax = localStorage.getItem(TAX_KEY);
+    taxPercent = savedTax !== null ? parseFloat(savedTax) : 30;
+    taxInput.value = taxPercent.toFixed(1);
+    taxDisplay.textContent = taxPercent.toFixed(1) + "%";
+
+    // Render all data
+    renderSales();
+    renderEmployees();
+    renderPayroll();
+    renderExpenses();
+    updateProfitTab();
+  }
+})();
+</script>
+</body>
+</html>
