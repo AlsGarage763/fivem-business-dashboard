@@ -501,24 +501,29 @@
 
   // ======= Payroll Logic =======
   function renderPayroll() {
-    payrollTableBody.innerHTML = "";
-    const payPerLog = 9.75;
-    let totalPayroll = 0;
+   function renderPayroll() {
+  payrollTableBody.innerHTML = "";
+  const defaultPayPerLog = 1000;
+  const specialEmployee = "John Delporte";
+  const specialPayPerLog = 1200;
+  let totalPayroll = 0;
 
-    employees.forEach(({name, logs}) => {
-      const totalPay = logs * payPerLog;
-      totalPayroll += totalPay;
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${name}</td>
-        <td>${logs}</td>
-        <td>${formatCurrency(payPerLog)}</td>
-        <td>${formatCurrency(totalPay)}</td>
-      `;
-      payrollTableBody.appendChild(tr);
-    });
-    payrollTotalDisplay.textContent = formatCurrency(totalPayroll);
-  }
+  employees.forEach(({name, logs}) => {
+    const payPerLog = (name === specialEmployee) ? specialPayPerLog : defaultPayPerLog;
+    const totalPay = logs * payPerLog;
+    totalPayroll += totalPay;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${name}</td>
+      <td>${logs}</td>
+      <td>${formatCurrency(payPerLog)}</td>
+      <td>${formatCurrency(totalPay)}</td>
+    `;
+    payrollTableBody.appendChild(tr);
+  });
+  payrollTotalDisplay.textContent = formatCurrency(totalPayroll);
+}
+
 
   // ======= Expenses Logic =======
   expensesForm.addEventListener("submit", e => {
