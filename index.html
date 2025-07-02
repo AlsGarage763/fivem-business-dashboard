@@ -5,191 +5,125 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Business Dashboard</title>
 <style>
-  /* General Reset */
-  * {
-    box-sizing: border-box;
-  }
   body {
     font-family: Arial, sans-serif;
-    margin: 0;
-    background: #f5f7fa;
-    color: #333;
+    margin: 0; padding: 0;
+    background: #f0f2f5;
   }
-  /* Container */
-  #dashboard {
+  #login-container, #dashboard {
     max-width: 900px;
-    margin: 2em auto;
-    padding: 1em;
-    background: #fff;
+    margin: 40px auto;
+    padding: 20px;
+    background: white;
     border-radius: 8px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px #aaa;
   }
-  /* Tabs Navigation */
-  .tabnav {
-    display: flex;
-    border-bottom: 2px solid #eee;
-    margin-bottom: 1em;
+  #dashboard {
+    display: none;
   }
-  .tabnav button {
-    flex: 1;
-    padding: 12px;
-    background: #eee;
+  h2 {
+    margin-top: 0;
+  }
+  form {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  input, select, button {
+    padding: 8px;
+    width: 100%;
+    max-width: 300px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  button {
+    background-color: #4CAF50;
+    color: white;
     border: none;
-    border-bottom: 4px solid transparent;
     cursor: pointer;
-    font-size: 1em;
-    font-weight: 600;
-    transition: background 0.3s, border-color 0.3s;
+    width: auto;
+    margin-top: 15px;
   }
-  .tabnav button.active {
-    background: #fff;
-    border-bottom-color: #007bff;
-    color: #007bff;
+  button:hover {
+    background-color: #45a049;
   }
-  .tabnav button:hover:not(.active) {
-    background: #ddd;
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
   }
-
-  /* Tab Content */
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+  th {
+    background-color: #f7f7f7;
+  }
+  .delete-btn {
+    background: #e74c3c;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 4px;
+  }
+  .delete-btn:hover {
+    background: #c0392b;
+  }
+  /* Tabs */
+  .tab {
+    overflow: hidden;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+  }
+  .tab button {
+    background-color: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 20px;
+    transition: 0.3s;
+    font-size: 16px;
+    border-bottom: 3px solid transparent;
+  }
+  .tab button.active {
+    border-bottom: 3px solid #4CAF50;
+    font-weight: bold;
+  }
   .tabcontent {
     display: none;
   }
   .tabcontent.active {
     display: block;
   }
-
-  /* Forms */
-  form.form-group {
-    margin-bottom: 1.5em;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1em;
+  /* Profit tab styling like others */
+  #profit-tab p {
+    font-size: 1.1em;
+    margin: 10px 0;
   }
-  form.form-group label {
-    flex: 1 0 120px;
-    align-self: center;
+  #profit-tab form {
+    margin-bottom: 15px;
   }
-  form.form-group input,
-  form.form-group select {
-    flex: 2 0 200px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  form.form-group button {
-    padding: 10px 20px;
-    background: #007bff;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.3s;
-  }
-  form.form-group button:hover {
-    background: #0056b3;
-  }
-
-  /* Data tables */
-  table.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1.5em;
-  }
-  table.data-table th,
-  table.data-table td {
-    padding: 10px 12px;
-    border: 1px solid #ddd;
-    text-align: left;
-  }
-  table.data-table th {
-    background: #f0f0f0;
-    font-weight: 700;
-  }
-  /* Delete button */
-  button.delete-btn {
-    background: #dc3545;
-    border: none;
-    color: white;
-    padding: 5px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.3s;
-  }
-  button.delete-btn:hover {
-    background: #a71d2a;
-  }
-
-  /* Login container */
-  #login-container {
-    max-width: 360px;
-    margin: 5em auto;
-    padding: 2em;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.1);
-  }
-  #login-container h2 {
-    text-align: center;
-    margin-bottom: 1em;
-  }
-  #login-container form label {
-    display: block;
-    margin-bottom: 0.3em;
-    font-weight: 600;
-  }
-  #login-container form input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 1.2em;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  #login-container form button {
-    width: 100%;
-    padding: 12px;
-    background: #007bff;
-    border: none;
-    border-radius: 6px;
-    color: white;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  #login-container form button:hover {
-    background: #0056b3;
-  }
-
-  /* Profit tab specific styles */
-  #tax-form {
-    margin-bottom: 1em;
-    display: flex;
-    align-items: center;
-  }
-  #tax-form label {
-    font-weight: 600;
-  }
-  #tax-input {
-    margin-left: 8px;
-    width: 80px;
-    padding: 6px 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+  #profit-tab label {
+    font-weight: bold;
   }
   #tax-display {
-    margin-left: 12px;
-    font-weight: 700;
-    min-width: 40px;
+    margin-left: 10px;
+    font-weight: normal;
   }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="login-container">
-  <h2>Owner Login</h2>
-  <form id="login-form">
+<div id="login-container" role="main" aria-label="Login form">
+  <h2>Login</h2>
+  <form id="login-form" aria-describedby="login-instructions">
+    <p id="login-instructions">Enter username and password to access the dashboard.</p>
     <label for="username">Username</label>
     <input type="text" id="username" autocomplete="username" required />
     <label for="password">Password</label>
@@ -198,26 +132,26 @@
   </form>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard" style="display:none;">
-  <nav class="tabnav" role="tablist" aria-label="Dashboard Tabs">
+<div id="dashboard" role="main" aria-label="Business Dashboard">
+  <h2>Business Dashboard</h2>
+  <div class="tab" role="tablist" aria-label="Dashboard Sections">
     <button class="tablinks active" data-tab="sales-tab" role="tab" aria-selected="true" tabindex="0">Sales</button>
     <button class="tablinks" data-tab="employees-tab" role="tab" aria-selected="false" tabindex="-1">Employees</button>
     <button class="tablinks" data-tab="payroll-tab" role="tab" aria-selected="false" tabindex="-1">Payroll</button>
     <button class="tablinks" data-tab="expenses-tab" role="tab" aria-selected="false" tabindex="-1">Expenses</button>
     <button class="tablinks" data-tab="profit-tab" role="tab" aria-selected="false" tabindex="-1">Profit</button>
-  </nav>
+  </div>
 
   <!-- SALES TAB -->
   <div id="sales-tab" class="tabcontent active" role="tabpanel" tabindex="0">
-    <form id="sales-form" class="form-group" aria-label="Add Sales">
+    <form id="sales-form" aria-label="Add Sales">
       <label for="sale-month">Month (YYYY-MM)</label>
       <input type="month" id="sale-month" required />
       <label for="sale-amount">Amount ($)</label>
       <input type="number" id="sale-amount" min="0" step="0.01" required />
       <button type="submit">Add Sale</button>
     </form>
-    <table class="data-table" aria-label="Sales Data">
+    <table aria-label="Sales Data">
       <thead>
         <tr><th>Month</th><th>Amount</th><th>Action</th></tr>
       </thead>
@@ -227,22 +161,22 @@
 
   <!-- EMPLOYEES TAB -->
   <div id="employees-tab" class="tabcontent" role="tabpanel" tabindex="0">
-    <form id="employees-form" class="form-group" aria-label="Add Employee">
+    <form id="employees-form" aria-label="Add Employee">
       <label for="employee-name">Name</label>
       <input type="text" id="employee-name" required />
       <label for="employee-hire-date">Hire Date</label>
       <input type="date" id="employee-hire-date" required />
       <label for="employee-gender">Gender</label>
       <select id="employee-gender" required>
-        <option value="">Select</option>
+        <option value="">Select gender</option>
         <option value="Male">Male</option>
         <option value="Female">Female</option>
       </select>
-      <label for="employee-logs">Logs</label>
-      <input type="number" id="employee-logs" min="0" step="1" required />
+      <label for="employee-logs">Logs Worked</label>
+      <input type="number" id="employee-logs" min="0" required />
       <button type="submit">Add Employee</button>
     </form>
-    <table class="data-table" aria-label="Employees Data">
+    <table aria-label="Employees Data">
       <thead>
         <tr><th>Name</th><th>Hire Date</th><th>Gender</th><th>Logs</th><th>Action</th></tr>
       </thead>
@@ -252,27 +186,30 @@
 
   <!-- PAYROLL TAB -->
   <div id="payroll-tab" class="tabcontent" role="tabpanel" tabindex="0">
-    <table class="data-table" aria-label="Payroll Data">
+    <table aria-label="Payroll Data">
       <thead>
-        <tr><th>Name</th><th>Logs</th><th>Pay Per Log ($)</th><th>Total Pay ($)</th></tr>
+        <tr><th>Name</th><th>Logs</th><th>Pay per Log</th><th>Total Pay</th></tr>
       </thead>
       <tbody id="payroll-table-body"></tbody>
       <tfoot>
-        <tr><th colspan="3" style="text-align:right;">Total Payroll</th><th id="payroll-total">$0.00</th></tr>
+        <tr>
+          <th colspan="3" style="text-align:right">Total Payroll:</th>
+          <th id="payroll-total">$0.00</th>
+        </tr>
       </tfoot>
     </table>
   </div>
 
   <!-- EXPENSES TAB -->
   <div id="expenses-tab" class="tabcontent" role="tabpanel" tabindex="0">
-    <form id="expenses-form" class="form-group" aria-label="Add Expense">
+    <form id="expenses-form" aria-label="Add Expense">
       <label for="expense-month">Month (YYYY-MM)</label>
       <input type="month" id="expense-month" required />
       <label for="expense-amount">Amount ($)</label>
       <input type="number" id="expense-amount" min="0" step="0.01" required />
       <button type="submit">Add Expense</button>
     </form>
-    <table class="data-table" aria-label="Expenses Data">
+    <table aria-label="Expenses Data">
       <thead>
         <tr><th>Month</th><th>Amount</th><th>Action</th></tr>
       </thead>
@@ -377,6 +314,8 @@
       loginContainer.style.display = "none";
       dashboard.style.display = "block";
       initDashboard();
+      // Activate first tab on login
+      activateTab(tabs[0]);
     } else {
       alert("Invalid username or password.");
     }
@@ -414,41 +353,33 @@
     const month = saleMonthInput.value;
     const amount = parseFloat(saleAmountInput.value);
     if (!month || isNaN(amount) || amount < 0) return alert("Please enter valid sales data.");
-
-    // Check for duplicate month sales, update if exists
-    const existingIndex = sales.findIndex(s => s.month === month);
-    if (existingIndex !== -1) {
-      sales[existingIndex].amount = amount;
-    } else {
-      sales.push({ month, amount });
-    }
+    sales.push({month, amount});
     saveToStorage(SALES_KEY, sales);
+    saleMonthInput.value = "";
+    saleAmountInput.value = "";
     renderSales();
-    updateProfitTab();
-    salesForm.reset();
+    renderProfit();
   });
 
   function renderSales() {
     salesTableBody.innerHTML = "";
-    // Sort sales by month ascending
-    sales.sort((a,b) => a.month.localeCompare(b.month));
-    sales.forEach(({month, amount}, i) => {
+    sales.forEach((sale, idx) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${month}</td>
-        <td>${formatCurrency(amount)}</td>
-        <td><button class="delete-btn" data-index="${i}" aria-label="Delete sales for ${month}">Delete</button></td>
+        <td>${sale.month}</td>
+        <td>${formatCurrency(sale.amount)}</td>
+        <td><button class="delete-btn" aria-label="Delete sale for ${sale.month}" data-index="${idx}">Delete</button></td>
       `;
       salesTableBody.appendChild(tr);
     });
   }
   salesTableBody.addEventListener("click", e => {
     if (e.target.classList.contains("delete-btn")) {
-      const idx = +e.target.dataset.index;
+      const idx = e.target.getAttribute("data-index");
       sales.splice(idx, 1);
       saveToStorage(SALES_KEY, sales);
       renderSales();
-      updateProfitTab();
+      renderProfit();
     }
   });
 
@@ -458,72 +389,68 @@
     const name = employeeNameInput.value.trim();
     const hireDate = employeeHireDateInput.value;
     const gender = employeeGenderInput.value;
-    const logs = parseInt(employeeLogsInput.value, 10);
+    const logs = parseInt(employeeLogsInput.value);
+
     if (!name || !hireDate || !gender || isNaN(logs) || logs < 0) return alert("Please enter valid employee data.");
-
-    // Prevent duplicate employee name
-    if (employees.some(emp => emp.name.toLowerCase() === name.toLowerCase())) {
-      return alert("Employee with this name already exists.");
-    }
-
-    employees.push({ name, hireDate, gender, logs });
+    employees.push({name, hireDate, gender, logs});
     saveToStorage(EMPLOYEES_KEY, employees);
+    employeeNameInput.value = "";
+    employeeHireDateInput.value = "";
+    employeeGenderInput.value = "";
+    employeeLogsInput.value = "";
     renderEmployees();
     renderPayroll();
-    updateProfitTab();
-    employeesForm.reset();
+    renderProfit();
   });
 
   function renderEmployees() {
     employeesTableBody.innerHTML = "";
-    employees.forEach(({name, hireDate, gender, logs}, i) => {
+    employees.forEach(({name, hireDate, gender, logs}, idx) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${name}</td>
         <td>${hireDate}</td>
         <td>${gender}</td>
         <td>${logs}</td>
-        <td><button class="delete-btn" data-index="${i}" aria-label="Delete employee ${name}">Delete</button></td>
+        <td><button class="delete-btn" aria-label="Delete employee ${name}" data-index="${idx}">Delete</button></td>
       `;
       employeesTableBody.appendChild(tr);
     });
   }
   employeesTableBody.addEventListener("click", e => {
     if (e.target.classList.contains("delete-btn")) {
-      const idx = +e.target.dataset.index;
+      const idx = e.target.getAttribute("data-index");
       employees.splice(idx, 1);
       saveToStorage(EMPLOYEES_KEY, employees);
       renderEmployees();
       renderPayroll();
-      updateProfitTab();
+      renderProfit();
     }
   });
 
   // ======= Payroll Logic =======
   function renderPayroll() {
-   function renderPayroll() {
-  payrollTableBody.innerHTML = "";
-  const defaultPayPerLog = 1000;
-  const specialEmployee = "John Delporte";
-  const specialPayPerLog = 1200;
-  let totalPayroll = 0;
+    payrollTableBody.innerHTML = "";
+    const defaultPayPerLog = 1000;
+    const specialEmployee = "John Delporte";
+    const specialPayPerLog = 1200;
+    let totalPayroll = 0;
 
-  employees.forEach(({name, logs}) => {
-    const payPerLog = (name === specialEmployee) ? specialPayPerLog : defaultPayPerLog;
-    const totalPay = logs * payPerLog;
-    totalPayroll += totalPay;
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${name}</td>
-      <td>${logs}</td>
-      <td>${formatCurrency(payPerLog)}</td>
-      <td>${formatCurrency(totalPay)}</td>
-    `;
-    payrollTableBody.appendChild(tr);
-  });
-  payrollTotalDisplay.textContent = formatCurrency(totalPayroll);
-}
-
+    employees.forEach(({name, logs}) => {
+      const payPerLog = (name === specialEmployee) ? specialPayPerLog : defaultPayPerLog;
+      const totalPay = logs * payPerLog;
+      totalPayroll += totalPay;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${name}</td>
+        <td>${logs}</td>
+        <td>${formatCurrency(payPerLog)}</td>
+        <td>${formatCurrency(totalPay)}</td>
+      `;
+      payrollTableBody.appendChild(tr);
+    });
+    payrollTotalDisplay.textContent = formatCurrency(totalPayroll);
+  }
 
   // ======= Expenses Logic =======
   expensesForm.addEventListener("submit", e => {
@@ -531,90 +458,107 @@
     const month = expenseMonthInput.value;
     const amount = parseFloat(expenseAmountInput.value);
     if (!month || isNaN(amount) || amount < 0) return alert("Please enter valid expense data.");
-
-    // Check duplicate month for expenses and update
-    const existingIndex = expenses.findIndex(exp => exp.month === month);
-    if (existingIndex !== -1) {
-      expenses[existingIndex].amount = amount;
-    } else {
-      expenses.push({ month, amount });
-    }
+    expenses.push({month, amount});
     saveToStorage(EXPENSES_KEY, expenses);
+    expenseMonthInput.value = "";
+    expenseAmountInput.value = "";
     renderExpenses();
-    updateProfitTab();
-    expensesForm.reset();
+    renderProfit();
   });
 
   function renderExpenses() {
     expensesTableBody.innerHTML = "";
-    expenses.sort((a,b) => a.month.localeCompare(b.month));
-    expenses.forEach(({month, amount}, i) => {
+    expenses.forEach((expense, idx) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${month}</td>
-        <td>${formatCurrency(amount)}</td>
-        <td><button class="delete-btn" data-index="${i}" aria-label="Delete expense for ${month}">Delete</button></td>
+        <td>${expense.month}</td>
+        <td>${formatCurrency(expense.amount)}</td>
+        <td><button class="delete-btn" aria-label="Delete expense for ${expense.month}" data-index="${idx}">Delete</button></td>
       `;
       expensesTableBody.appendChild(tr);
     });
   }
   expensesTableBody.addEventListener("click", e => {
     if (e.target.classList.contains("delete-btn")) {
-      const idx = +e.target.dataset.index;
+      const idx = e.target.getAttribute("data-index");
       expenses.splice(idx, 1);
       saveToStorage(EXPENSES_KEY, expenses);
       renderExpenses();
-      updateProfitTab();
+      renderProfit();
     }
   });
 
-  // ======= Profit Tab Logic =======
-  function updateProfitTab() {
-    const totalSales = sales.reduce((sum, s) => sum + s.amount, 0);
-    const totalPayroll = employees.reduce((sum, emp) => sum + (emp.logs * 9.75), 0);
-    const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
-
-    totalSalesDisplay.textContent = totalSales.toFixed(2);
-    totalPayrollDisplay.textContent = totalPayroll.toFixed(2);
-    totalExpensesDisplay.textContent = totalExpenses.toFixed(2);
-
-    const taxableAmount = totalSales - totalPayroll - totalExpenses;
-    const tax = taxableAmount * (taxPercent / 100);
-    const profitAfterTax = taxableAmount - tax;
-
-    profitAfterTaxDisplay.textContent = profitAfterTax.toFixed(2);
-  }
-
+  // ======= Profit Logic =======
   taxInput.addEventListener("input", () => {
     let val = parseFloat(taxInput.value);
     if (isNaN(val) || val < 0) val = 0;
     if (val > 100) val = 100;
+    taxInput.value = val;
+    taxDisplay.textContent = val + "%";
     taxPercent = val;
-    taxInput.value = val.toFixed(1);
-    taxDisplay.textContent = val.toFixed(1) + "%";
-    localStorage.setItem(TAX_KEY, val);
-    updateProfitTab();
+    localStorage.setItem(TAX_KEY, taxPercent);
+    renderProfit();
   });
 
-  // ======= Initialization =======
+  function renderProfit() {
+    const totalSales = sales.reduce((sum, s) => sum + s.amount, 0);
+    const totalPayroll = employees.reduce((sum, emp) => {
+      const payPerLog = (emp.name === "John Delporte") ? 1200 : 1000;
+      return sum + emp.logs * payPerLog;
+    }, 0);
+    const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+    const grossProfit = totalSales - totalExpenses - totalPayroll;
+    const taxAmount = grossProfit * (taxPercent / 100);
+    const profitAfterTax = grossProfit - taxAmount;
+
+    totalSalesDisplay.textContent = totalSales.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    totalPayrollDisplay.textContent = totalPayroll.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    totalExpensesDisplay.textContent = totalExpenses.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    profitAfterTaxDisplay.textContent = profitAfterTax.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  }
+
+  // ======= Initialize dashboard after login =======
   function initDashboard() {
     // Load from storage
     sales = loadFromStorage(SALES_KEY);
     employees = loadFromStorage(EMPLOYEES_KEY);
     expenses = loadFromStorage(EXPENSES_KEY);
     const savedTax = localStorage.getItem(TAX_KEY);
-    taxPercent = savedTax !== null ? parseFloat(savedTax) : 30;
-    taxInput.value = taxPercent.toFixed(1);
-    taxDisplay.textContent = taxPercent.toFixed(1) + "%";
+    if (savedTax !== null) {
+      taxPercent = parseFloat(savedTax);
+      if (isNaN(taxPercent)) taxPercent = 30;
+      taxInput.value = taxPercent;
+      taxDisplay.textContent = taxPercent + "%";
+    }
 
-    // Render all data
     renderSales();
     renderEmployees();
     renderPayroll();
     renderExpenses();
-    updateProfitTab();
+    renderProfit();
   }
+
+  // ======= Keyboard accessibility for tabs =======
+  // Left/Right arrows to move focus and activate tabs
+  dashboard.querySelector(".tab").addEventListener("keydown", e => {
+    const focusableTabs = Array.from(tabs);
+    let idx = focusableTabs.findIndex(t => t === document.activeElement);
+    if (idx === -1) return;
+    if (e.key === "ArrowRight") {
+      idx = (idx + 1) % focusableTabs.length;
+      focusableTabs[idx].focus();
+      activateTab(focusableTabs[idx]);
+      e.preventDefault();
+    } else if (e.key === "ArrowLeft") {
+      idx = (idx - 1 + focusableTabs.length) % focusableTabs.length;
+      focusableTabs[idx].focus();
+      activateTab(focusableTabs[idx]);
+      e.preventDefault();
+    }
+  });
+
 })();
 </script>
+
 </body>
 </html>
